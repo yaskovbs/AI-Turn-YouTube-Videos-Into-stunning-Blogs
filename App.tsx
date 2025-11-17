@@ -152,8 +152,8 @@ function App() {
     React.createElement(Header, {
       isLoggedIn: isLoggedIn,
       onLoginToggle: handleLoginToggle,
-      isDarkMode: isDarkMode,
-      onDarkModeToggle: handleDarkModeToggle,
+      themeMode: themeMode,
+      onThemeChange: handleThemeChange,
       currentView: currentView,
       onViewChange: setCurrentView,
       currentUser: currentUser, // Pass currentUser to Header
