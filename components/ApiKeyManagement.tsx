@@ -76,34 +76,71 @@ const ApiKeyManagement = ({ showToast, setCurrentView }) => {
 
     React.createElement(
       'div',
-      { className: 'w-full max-w-lg bg-gray-800 p-6 rounded-lg shadow-xl mt-8 text-left' },
+      { className: 'w-full max-w-lg bg-gradient-to-br from-purple-900/40 to-gray-800/60 p-6 rounded-xl shadow-2xl mt-8 text-left border border-purple-500/30' },
       React.createElement(
         'h3',
-        { className: 'text-xl font-bold text-blue-300 mb-4' },
-        'מפתח API של Google Gemini:',
+        { className: 'text-2xl font-black text-transparent bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text mb-6 flex items-center gap-2' },
+        '🔑 מפתח API של Google Gemini',
+      ),
+      React.createElement(
+        'div',
+        { className: 'mb-6' },
+        React.createElement(
+          'label',
+          { htmlFor: 'geminiApiKey', className: 'block text-gray-300 text-sm font-bold mb-2' },
+          'מפתח Google Gemini API:',
+        ),
+        React.createElement('input', {
+          key: 'gemini-api-key-input',
+          type: 'password',
+          id: 'geminiApiKey',
+          value: geminiApiKey,
+          onChange: handleGeminiApiKeyChange,
+          placeholder: 'הזינו את מפתח ה-Gemini API שלכם',
+          className: 'shadow-lg appearance-none border-2 border-purple-500/30 rounded-lg w-full py-3 px-4 text-white leading-tight focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/50 bg-gray-900/80 transition-all',
+          'aria-label': 'Gemini API key input',
+          'data-testid': 'gemini-api-key-input',
+        }),
+        React.createElement(
+          'button',
+          {
+            onClick: handleSaveGeminiApiKey,
+            className: 'mt-3 w-full bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 shadow-lg hover:shadow-purple-500/50',
+            'data-testid': 'save-gemini-key-button',
+          },
+          '💾 שמור מפתח Gemini API',
+        ),
       ),
       React.createElement(
         'ul',
-        { className: 'list-disc list-inside text-gray-300 space-y-2 mb-6' },
+        { className: 'list-disc list-inside text-gray-300 space-y-3 mb-6 bg-gray-900/50 p-4 rounded-lg' },
         React.createElement(
           'li',
           null,
-          React.createElement('strong', null, 'שימוש:'),
+          React.createElement('strong', { className: 'text-purple-300' }, 'שימוש:'),
           ' מפתח זה משמש את AI Studio לגישה למודלי Gemini עבור יצירת בלוגים, תמונות, וידאו, צ\'אט, קול ו-TTS.',
         ),
         React.createElement(
           'li',
           null,
-          React.createElement('strong', null, 'אבטחה:'),
-          ' מפתח ה-API הראשי של AI Studio נשמר באופן מאובטח בסביבת השרת ואינו נחשף ישירות בצד הלקוח.',
+          React.createElement('strong', { className: 'text-purple-300' }, 'אבטחה:'),
+          ' מפתח ה-API נשמר בדפדפן שלכם (localStorage) ונשלח ישירות ל-API של Google.',
         ),
         React.createElement(
           'li',
           null,
-          React.createElement('strong', null, 'למשתמשים:'),
-          ' אתם יכולים לבחור מפתח API משלכם עבור תכונות מסוימות כמו יצירת וידאו ב-Veo דרך הממשק המאובטח שלנו (',
-          React.createElement('code', null, 'window.aistudio.openSelectKey()'),
-          ').',
+          React.createElement('strong', { className: 'text-purple-300' }, 'קבלת מפתח:'),
+          ' קבלו מפתח API חינם ב-',
+          React.createElement(
+            'a',
+            {
+              href: 'https://aistudio.google.com/apikey',
+              target: '_blank',
+              rel: 'noopener noreferrer',
+              className: 'text-cyan-400 hover:text-cyan-300 underline font-semibold',
+            },
+            'Google AI Studio',
+          ),
         ),
       ),
 
