@@ -1,15 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { getYouTubeApiKey, setYouTubeApiKey } from '../utils/youtube';
 
+// Helper functions for Gemini API Key
+const getGeminiApiKey = () => localStorage.getItem('gemini_api_key') || '';
+const setGeminiApiKey = (key: string) => localStorage.setItem('gemini_api_key', key);
+
 const ApiKeyManagement = ({ showToast, setCurrentView }) => {
   const [youtubeApiKey, setYoutubeApiKeyState] = useState('');
+  const [geminiApiKey, setGeminiApiKeyState] = useState('');
   const [error, setError] = useState(null);
 
   useEffect(() => {
     // Load saved YouTube API key from localStorage
-    const savedKey = getYouTubeApiKey();
-    if (savedKey) {
-      setYoutubeApiKeyState(savedKey);
+    const savedYouTubeKey = getYouTubeApiKey();
+    if (savedYouTubeKey) {
+      setYoutubeApiKeyState(savedYouTubeKey);
+    }
+
+    // Load saved Gemini API key from localStorage
+    const savedGeminiKey = getGeminiApiKey();
+    if (savedGeminiKey) {
+      setGeminiApiKeyState(savedGeminiKey);
     }
 
     // Push AdSense ads when component mounts - removed explicit push
@@ -17,6 +28,11 @@ const ApiKeyManagement = ({ showToast, setCurrentView }) => {
 
   const handleYouTubeApiKeyChange = (e) => {
     setYoutubeApiKeyState(e.target.value);
+    setError(null);
+  };
+
+  const handleGeminiApiKeyChange = (e) => {
+    setGeminiApiKeyState(e.target.value);
     setError(null);
   };
 
@@ -28,6 +44,17 @@ const ApiKeyManagement = ({ showToast, setCurrentView }) => {
     } else {
       setError('Please enter a valid API key.');
       showToast('Please enter a valid API key.', 'error');
+    }
+  };
+
+  const handleSaveGeminiApiKey = () => {
+    if (geminiApiKey.trim()) {
+      setGeminiApiKey(geminiApiKey.trim());
+      showToast('מפתח Google Gemini API נשמר בהצלחה!', 'success');
+      setError(null);
+    } else {
+      setError('נא להזין מפתח API תקין.');
+      showToast('נא להזין מפתח API תקין.', 'error');
     }
   };
 
