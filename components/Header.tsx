@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
+import ThemeSelector from './ThemeSelector';
 import {
-  MOON_ICON,
-  SUN_ICON,
   BLOG_ICON,
   IMAGE_GENERATOR_ICON,
   IMAGE_EDITOR_ICON,
@@ -18,14 +17,24 @@ import {
   LEGAL_ICON,
 } from '../constants.tsx';
 
+type ThemeMode = 'light' | 'dark' | 'system';
+
 const Header = ({
   isLoggedIn,
   onLoginToggle,
-  isDarkMode,
-  onDarkModeToggle,
+  themeMode,
+  onThemeChange,
   currentView,
   onViewChange,
   currentUser,
+}: {
+  isLoggedIn: boolean;
+  onLoginToggle: (loggedIn: boolean) => void;
+  themeMode: ThemeMode;
+  onThemeChange: (theme: ThemeMode) => void;
+  currentView: string;
+  onViewChange: (view: string) => void;
+  currentUser: any;
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
