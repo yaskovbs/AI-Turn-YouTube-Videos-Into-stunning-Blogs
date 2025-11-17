@@ -135,13 +135,7 @@ const Header = ({
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            <button
-              onClick={onDarkModeToggle}
-              aria-label="Toggle dark mode"
-              className="p-2 rounded-lg hover:bg-gray-800"
-            >
-              {isDarkMode ? SUN_ICON : MOON_ICON}
-            </button>
+            <ThemeSelector currentTheme={themeMode} onThemeChange={onThemeChange} />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 rounded-lg hover:bg-gray-800"
