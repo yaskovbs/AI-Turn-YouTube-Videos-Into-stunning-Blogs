@@ -7,6 +7,8 @@ import { getYouTubeVideoId } from './utils/youtube';
 import { createHandlers, createShowToast } from './handlers';
 import ContentRenderer from './ContentRenderer';
 
+type ThemeMode = 'light' | 'dark' | 'system';
+
 function App() {
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [targetAudience, setTargetAudience] = useState(''); // New state for target audience
@@ -17,7 +19,8 @@ function App() {
   const [error, setError] = useState(null);
   const [currentUser, setCurrentUser] = useState(null); // New state for current user
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Default to not logged in
-  const [isDarkMode, setIsDarkMode] = useState(true); // Default to dark mode
+  const [themeMode, setThemeMode] = useState<ThemeMode>('system'); // New: System theme by default
+  const [isDarkMode, setIsDarkMode] = useState(true); // Computed based on themeMode
   const [showVideoEmbed, setShowVideoEmbed] = useState(false);
   const [currentView, setCurrentView] = useState('home'); // Default view to 'home'
   const [toast, setToast] = useState(null); // New state for toast notifications
