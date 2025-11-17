@@ -2,7 +2,6 @@ import { GoogleGenAI, Modality, Type } from '@google/genai';
 import { getYouTubeVideoId } from '../utils/youtube';
 import { decode, decodeAudioData, createPcmBlob } from '../utils/file';
 
-<<<<<<< HEAD
 // TypeScript type definitions
 interface YouTubeVideoInfo {
   title: string;
@@ -99,15 +98,13 @@ interface SpeechResponse {
   audioBuffer: AudioBuffer;
 }
 
-=======
->>>>>>> 52f6d9e79250e4bb82c5d6f4bc71a0f61c021f20
 const getApiKey = () => {
   // First try to get from localStorage (user's custom key)
   const localStorageKey = localStorage.getItem('gemini_api_key');
   if (localStorageKey && localStorageKey.trim()) {
     return localStorageKey.trim();
   }
-  
+
   // Fallback to environment variable
   const apiKey = process.env.GEMINI_API_KEY || import.meta.env.VITE_GEMINI_API_KEY;
   if (!apiKey) {
@@ -118,13 +115,8 @@ const getApiKey = () => {
 
 // Helper to simulate fetching video title and thumbnail
 async function fetchYouTubeVideoDetails(
-<<<<<<< HEAD
   youtubeUrl: string,
 ): Promise<YouTubeVideoInfo> {
-=======
-  youtubeUrl,
-) {
->>>>>>> 52f6d9e79250e4bb82c5d6f4bc71a0f61c021f20
   const videoId = getYouTubeVideoId(youtubeUrl);
   if (!videoId) {
     throw new Error('Invalid YouTube URL');
@@ -150,17 +142,10 @@ async function fetchYouTubeVideoDetails(
 }
 
 export const generateBlogPost = async (
-<<<<<<< HEAD
   youtubeUrl: string,
   targetAudience: string,
   desiredTone: string,
 ): Promise<BlogResponse> => {
-=======
-  youtubeUrl,
-  targetAudience, // New parameter
-  desiredTone,    // New parameter
-) => {
->>>>>>> 52f6d9e79250e4bb82c5d6f4bc71a0f61c021f20
   const ai = new GoogleGenAI({ apiKey: getApiKey() });
   const model = 'gemini-2.5-flash'; // Using the appropriate model for text generation
 
@@ -218,32 +203,19 @@ export const generateBlogPost = async (
     };
   } catch (error) {
     console.error('Error generating blog post:', error);
-<<<<<<< HEAD
     if ((error as any)?.status === 400) throw new Error('Invalid request to Gemini API. Please check your prompt.');
     if ((error as any)?.status === 401) throw new Error('Unauthorized: Invalid API key. Please check your API key.');
     if ((error as any)?.status === 403) throw new Error('Forbidden: API key lacks necessary permissions or access. Check billing.');
     if ((error as any)?.status === 429) throw new Error('Rate limit exceeded. Please try again after some time.');
     if ((error as any)?.status >= 500) throw new Error('Gemini API internal server error. Please try again later.');
-=======
-    if (error.status === 400) throw new Error('Invalid request to Gemini API. Please check your prompt.');
-    if (error.status === 401) throw new Error('Unauthorized: Invalid API key. Please check your API key.');
-    if (error.status === 403) throw new Error('Forbidden: API key lacks necessary permissions or access. Check billing.');
-    if (error.status === 429) throw new Error('Rate limit exceeded. Please try again after some time.');
-    if (error.status >= 500) throw new Error('Gemini API internal server error. Please try again later.');
->>>>>>> 52f6d9e79250e4bb82c5d6f4bc71a0f61c021f20
     throw new Error(`Failed to generate blog post: ${error instanceof Error ? error.message : String(error)}`);
   }
 };
 
 
 export const generateImage = async (
-<<<<<<< HEAD
   request: ImageRequest,
 ): Promise<ImageResponse> => {
-=======
-  request,
-) => {
->>>>>>> 52f6d9e79250e4bb82c5d6f4bc71a0f61c021f20
   const ai = new GoogleGenAI({ apiKey: getApiKey() });
   const model = 'imagen-4.0-generate-001';
 
@@ -258,14 +230,10 @@ export const generateImage = async (
       },
     });
 
-<<<<<<< HEAD
     if (!response.generatedImages || response.generatedImages.length === 0 || !response.generatedImages[0] || !response.generatedImages[0].image) {
       throw new Error('Image generation failed: No images generated.');
     }
     const base64ImageBytes = response.generatedImages[0].image.imageBytes;
-=======
-    const base64ImageBytes = response.generatedImages[0]?.image.imageBytes;
->>>>>>> 52f6d9e79250e4bb82c5d6f4bc71a0f61c021f20
     if (!base64ImageBytes) {
       throw new Error('Image generation failed: No image bytes returned.');
     }
@@ -275,32 +243,19 @@ export const generateImage = async (
     };
   } catch (error) {
     console.error('Error generating image:', error);
-<<<<<<< HEAD
     if ((error as any)?.status === 400) throw new Error('Invalid request for image generation. Please check your prompt.');
     if ((error as any)?.status === 401) throw new Error('Unauthorized: Invalid API key. Please check your API key.');
     if ((error as any)?.status === 403) throw new Error('Forbidden: API key lacks necessary permissions or access. Check billing.');
     if ((error as any)?.status === 429) throw new Error('Rate limit exceeded. Please try again after some time.');
     if ((error as any)?.status >= 500) throw new Error('Image generation service internal server error. Please try again later.');
-=======
-    if (error.status === 400) throw new Error('Invalid request for image generation. Please check your prompt.');
-    if (error.status === 401) throw new Error('Unauthorized: Invalid API key. Please check your API key.');
-    if (error.status === 403) throw new Error('Forbidden: API key lacks necessary permissions or access. Check billing.');
-    if (error.status === 429) throw new Error('Rate limit exceeded. Please try again after some time.');
-    if (error.status >= 500) throw new Error('Image generation service internal server error. Please try again later.');
->>>>>>> 52f6d9e79250e4bb82c5d6f4bc71a0f61c021f20
     throw new Error(`Failed to generate image: ${error instanceof Error ? error.message : String(error)}`);
   }
 };
 
 
 export const editImage = async (
-<<<<<<< HEAD
   request: EditImageRequest,
 ): Promise<EditImageResponse> => {
-=======
-  request,
-) => {
->>>>>>> 52f6d9e79250e4bb82c5d6f4bc71a0f61c021f20
   const ai = new GoogleGenAI({ apiKey: getApiKey() });
   const model = 'gemini-2.5-flash-image';
 
@@ -335,26 +290,17 @@ export const editImage = async (
     };
   } catch (error) {
     console.error('Error editing image:', error);
-<<<<<<< HEAD
     if ((error as any)?.status === 400) throw new Error('Invalid request for image editing. Please check your prompt or image data.');
     if ((error as any)?.status === 401) throw new Error('Unauthorized: Invalid API key. Please check your API key.');
     if ((error as any)?.status === 403) throw new Error('Forbidden: API key lacks necessary permissions or access. Check billing.');
     if ((error as any)?.status === 429) throw new Error('Rate limit exceeded. Please try again after some time.');
     if ((error as any)?.status >= 500) throw new Error('Image editing service internal server error. Please try again later.');
-=======
-    if (error.status === 400) throw new Error('Invalid request for image editing. Please check your prompt or image data.');
-    if (error.status === 401) throw new Error('Unauthorized: Invalid API key. Please check your API key.');
-    if (error.status === 403) throw new Error('Forbidden: API key lacks necessary permissions or access. Check billing.');
-    if (error.status === 429) throw new Error('Rate limit exceeded. Please try again after some time.');
-    if (error.status >= 500) throw new Error('Image editing service internal server error. Please try again later.');
->>>>>>> 52f6d9e79250e4bb82c5d6f4bc71a0f61c021f20
     throw new Error(`Failed to edit image: ${error instanceof Error ? error.message : String(error)}`);
   }
 };
 
 
 export const generateVideo = async (
-<<<<<<< HEAD
   request: any,
 ): Promise<{ videoUrl: string }> => {
   // @ts-ignore - FFmpeg types might not be available
@@ -412,62 +358,10 @@ export const generateVideo = async (
     };
   } catch (error) {
     console.error('Error generating video:', error);
-=======
-  request,
-) => {
-  let ai = new GoogleGenAI({ apiKey: getApiKey() }); // Re-initialize for up-to-date API key
-  const model = 'veo-3.1-fast-generate-preview';
-
-  // Fix: Directly access window.aistudio without explicit casting, relying on global.d.ts type declaration.
-  if (window.aistudio && !(await window.aistudio.hasSelectedApiKey())) {
-    await window.aistudio.openSelectKey();
-    ai = new GoogleGenAI({ apiKey: getApiKey() }); // Re-initialize after selection
-  }
-
-  try {
-    let operation = await ai.models.generateVideos({
-      model: model,
-      prompt: request.prompt,
-      image: request.image,
-      config: {
-        numberOfVideos: 1,
-        resolution: request.resolution,
-        aspectRatio: request.aspectRatio,
-        lastFrame: request.lastFrame, // lastFrame should be inside config
-      },
-    });
-
-    while (!operation.done) {
-      await new Promise((resolve) => setTimeout(resolve, 10000)); // Poll every 10 seconds
-      operation = await ai.operations.getVideosOperation({ operation: operation });
-    }
-
-    const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
-    if (!downloadLink) {
-      throw new Error('Video generation failed: No video URI returned.');
-    }
-
-    return {
-      videoUrl: `${downloadLink}&key=${getApiKey()}`, // Append API key for direct download
-    };
-  } catch (error) {
-    console.error('Error generating video:', error);
-    // Fix: Directly access window.aistudio without explicit casting, relying on global.d.ts type declaration.
-    if (error instanceof Error && error.message.includes('Requested entity was not found.') && window.aistudio) {
-      await window.aistudio.openSelectKey(); // Prompt for key if not found
-      throw new Error('API key not found or invalid. Please select your API key again.');
-    }
-    if (error.status === 400) throw new Error('Invalid request for video generation. Please check your prompt, images, or config.');
-    if (error.status === 401) throw new Error('Unauthorized: Invalid API key. Please check your API key.');
-    if (error.status === 403) throw new Error('Forbidden: API key lacks necessary permissions or access. Check billing.');
-    if (error.status === 429) throw new Error('Rate limit exceeded. Please try again after some time.');
-    if (error.status >= 500) throw new Error('Video generation service internal server error. Please try again later.');
->>>>>>> 52f6d9e79250e4bb82c5d6f4bc71a0f61c021f20
     throw new Error(`Failed to generate video: ${error instanceof Error ? error.message : String(error)}`);
   }
 };
 
-<<<<<<< HEAD
 function parseResolution(resolution: string) {
   const resolutions: Record<string, { width: number; height: number; frameRate: number }> = {
     '720p': { width: 1280, height: 720, frameRate: 30 },
@@ -601,13 +495,6 @@ export const analyzeVideo = async (
   request: AnalyzeVideoRequest,
   thumbnailBase64: string,
 ): Promise<AnalyzeVideoResponse> => {
-=======
-
-export const analyzeVideo = async (
-  request,
-  thumbnailBase64,
-) => {
->>>>>>> 52f6d9e79250e4bb82c5d6f4bc71a0f61c021f20
   const ai = new GoogleGenAI({ apiKey: getApiKey() });
   const model = 'gemini-2.5-pro'; // Use Pro for complex tasks like video understanding
 
@@ -642,36 +529,21 @@ export const analyzeVideo = async (
     return { analysisResult };
   } catch (error) {
     console.error('Error analyzing video:', error);
-<<<<<<< HEAD
     if ((error as any)?.status === 400) throw new Error('Invalid request for video analysis. Please check your prompt or video data.');
     if ((error as any)?.status === 401) throw new Error('Unauthorized: Invalid API key. Please check your API key.');
     if ((error as any)?.status === 403) throw new Error('Forbidden: API key lacks necessary permissions or access. Check billing.');
     if ((error as any)?.status === 429) throw new Error('Rate limit exceeded. Please try again after some time.');
     if ((error as any)?.status >= 500) throw new Error('Video analysis service internal server error. Please try again later.');
-=======
-    if (error.status === 400) throw new Error('Invalid request for video analysis. Please check your prompt or video data.');
-    if (error.status === 401) throw new Error('Unauthorized: Invalid API key. Please check your API key.');
-    if (error.status === 403) throw new Error('Forbidden: API key lacks necessary permissions or access. Check billing.');
-    if (error.status === 429) throw new Error('Rate limit exceeded. Please try again after some time.');
-    if (error.status >= 500) throw new Error('Video analysis service internal server error. Please try again later.');
->>>>>>> 52f6d9e79250e4bb82c5d6f4bc71a0f61c021f20
     throw new Error(`Failed to analyze video: ${error instanceof Error ? error.message : String(error)}`);
   }
 };
 
 
 export const sendMessageToChatbot = async (
-<<<<<<< HEAD
   history: ChatMessage[],
   newMessage: string,
   userLocation?: { latitude: number; longitude: number },
 ): Promise<ChatResponse> => {
-=======
-  history,
-  newMessage,
-  userLocation,
-) => {
->>>>>>> 52f6d9e79250e4bb82c5d6f4bc71a0f61c021f20
   const ai = new GoogleGenAI({ apiKey: getApiKey() });
   const model = 'gemini-2.5-flash';
 
@@ -684,7 +556,7 @@ export const sendMessageToChatbot = async (
 
   // Fix: Construct tools array correctly for both googleSearch and googleMaps as separate tool entries.
   // Explicitly type `tools` as `any[]` to allow for different tool types to be pushed.
-  const tools: any[] = [{ googleSearch: {} }]; 
+  const tools: any[] = [{ googleSearch: {} }];
   if (userLocation) {
     tools.push({ googleMaps: {} });
   }
@@ -710,11 +582,7 @@ export const sendMessageToChatbot = async (
       },
     });
 
-<<<<<<< HEAD
     const modelResponseText = response.text || '';
-=======
-    const modelResponseText = response.text;
->>>>>>> 52f6d9e79250e4bb82c5d6f4bc71a0f61c021f20
     const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
     const groundingUrls = [];
 
@@ -738,40 +606,23 @@ export const sendMessageToChatbot = async (
     };
   } catch (error) {
     console.error('Error sending chat message:', error);
-<<<<<<< HEAD
     if ((error as any)?.status === 400) throw new Error('Invalid chat message or request to Gemini API.');
     if ((error as any)?.status === 401) throw new Error('Unauthorized: Invalid API key. Please check your API key.');
     if ((error as any)?.status === 403) throw new Error('Forbidden: API key lacks necessary permissions or access. Check billing.');
     if ((error as any)?.status === 429) throw new Error('Rate limit exceeded. Please try again after some time.');
     if ((error as any)?.status >= 500) throw new Error('Chatbot service internal server error. Please try again later.');
-=======
-    if (error.status === 400) throw new Error('Invalid chat message or request to Gemini API.');
-    if (error.status === 401) throw new Error('Unauthorized: Invalid API key. Please check your API key.');
-    if (error.status === 403) throw new Error('Forbidden: API key lacks necessary permissions or access. Check billing.');
-    if (error.status === 429) throw new Error('Rate limit exceeded. Please try again after some time.');
-    if (error.status >= 500) throw new Error('Chatbot service internal server error. Please try again later.');
->>>>>>> 52f6d9e79250e4bb82c5d6f4bc71a0f61c021f20
     throw new Error(`Failed to get chat response: ${error instanceof Error ? error.message : String(error)}`);
   }
 };
 
 
 export const startLiveAudioSession = async (
-<<<<<<< HEAD
   onMessageCallback: LiveAudioCallbacks['onMessageCallback'],
   onErrorCallback: LiveAudioCallbacks['onErrorCallback'],
   onCloseCallback: LiveAudioCallbacks['onCloseCallback'],
   onOpenCallback: LiveAudioCallbacks['onOpenCallback'],
   systemInstruction: string,
 ): Promise<any> => {
-=======
-  onMessageCallback,
-  onErrorCallback,
-  onCloseCallback,
-  onOpenCallback,
-  systemInstruction,
-) => {
->>>>>>> 52f6d9e79250e4bb82c5d6f4bc71a0f61c021f20
   const ai = new GoogleGenAI({ apiKey: getApiKey() });
   const model = 'gemini-2.5-flash-native-audio-preview-09-2025';
 
@@ -779,16 +630,16 @@ export const startLiveAudioSession = async (
   const controlLightFunctionDeclaration = {
     name: 'controlLight',
     parameters: {
-      type: Type.OBJECT, 
+      type: Type.OBJECT,
       description: 'Set the brightness and color temperature of a room light.',
       properties: {
         brightness: {
-          type: Type.NUMBER, 
+          type: Type.NUMBER,
           description:
             'Light level from 0 to 100. Zero is off and 100 is full brightness.',
         },
         colorTemperature: {
-          type: Type.STRING, 
+          type: Type.STRING,
           description:
             'Color temperature of the light fixture such as `daylight`, `cool` or `warm`.',
         },
@@ -839,13 +690,8 @@ export const startLiveAudioSession = async (
 
 
 export const generateSpeech = async (
-<<<<<<< HEAD
   request: SpeechRequest,
 ): Promise<SpeechResponse> => {
-=======
-  request,
-) => {
->>>>>>> 52f6d9e79250e4bb82c5d6f4bc71a0f61c021f20
   const ai = new GoogleGenAI({ apiKey: getApiKey() });
   const model = 'gemini-2.5-flash-preview-tts';
 
@@ -880,19 +726,11 @@ export const generateSpeech = async (
     return { audioBuffer };
   } catch (error) {
     console.error('Error generating speech:', error);
-<<<<<<< HEAD
     if ((error as any)?.status === 400) throw new Error('Invalid request for speech generation. Please check your text input.');
     if ((error as any)?.status === 401) throw new Error('Unauthorized: Invalid API key. Please check your API key.');
     if ((error as any)?.status === 403) throw new Error('Forbidden: API key lacks necessary permissions or access. Check billing.');
     if ((error as any)?.status === 429) throw new Error('Rate limit exceeded. Please try again after some time.');
     if ((error as any)?.status >= 500) throw new Error('Speech generation service internal server error. Please try again later.');
-=======
-    if (error.status === 400) throw new Error('Invalid request for speech generation. Please check your text input.');
-    if (error.status === 401) throw new Error('Unauthorized: Invalid API key. Please check your API key.');
-    if (error.status === 403) throw new Error('Forbidden: API key lacks necessary permissions or access. Check billing.');
-    if (error.status === 429) throw new Error('Rate limit exceeded. Please try again after some time.');
-    if (error.status >= 500) throw new Error('Speech generation service internal server error. Please try again later.');
->>>>>>> 52f6d9e79250e4bb82c5d6f4bc71a0f61c021f20
     throw new Error(`Failed to generate speech: ${error instanceof Error ? error.message : String(error)}`);
   }
 };

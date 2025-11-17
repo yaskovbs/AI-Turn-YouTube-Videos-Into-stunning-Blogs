@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 
-<<<<<<< HEAD
 const Home = ({ showToast }: { showToast: (message: string, type: string) => void }) => {
   // Calculate real rating from user feedback
   const getAverageRating = () => {
@@ -36,29 +35,6 @@ const Home = ({ showToast }: { showToast: (message: string, type: string) => voi
 
     showToast(`הודות על הדירוג! דירוג ממוצע חדש: ${newAverage}/5`, 'success');
   };
-=======
-const Home = ({ showToast }) => {
-  const [stats, setStats] = useState({
-    rating: 5.0,
-    uptime: 99.9,
-    activeUsers: 496,
-    recapsCreated: 240
-  });
-
-  useEffect(() => {
-    // Push AdSense ads when component mounts
-    // Simulate real-time stats updates (optional)
-    const interval = setInterval(() => {
-      setStats(prev => ({
-        ...prev,
-        activeUsers: prev.activeUsers + Math.floor(Math.random() * 3),
-        recapsCreated: prev.recapsCreated + Math.floor(Math.random() * 2)
-      }));
-    }, 60000); // Update every minute
-
-    return () => clearInterval(interval);
-  }, []);
->>>>>>> 52f6d9e79250e4bb82c5d6f4bc71a0f61c021f20
 
   return React.createElement(
     'div',
@@ -197,18 +173,13 @@ const Home = ({ showToast }) => {
             React.createElement(
               'div',
               { className: 'text-gray-300 font-semibold' },
-<<<<<<< HEAD
               'בלוגים שנוצרו'
-=======
-              'סיכומים נוצרו'
->>>>>>> 52f6d9e79250e4bb82c5d6f4bc71a0f61c021f20
             )
           )
         )
       )
     ),
 
-<<<<<<< HEAD
     // User Rating Section
     React.createElement(
       'div',
@@ -259,8 +230,6 @@ const Home = ({ showToast }) => {
       )
     ),
 
-=======
->>>>>>> 52f6d9e79250e4bb82c5d6f4bc71a0f61c021f20
     React.createElement(
       'div',
       { className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12' },
