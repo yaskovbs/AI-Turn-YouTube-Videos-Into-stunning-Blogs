@@ -1,0 +1,8 @@
+{
+  "name": "Turn-YouTube-Videos-Into-Stunning-Blogs",
+  "description": "Transform YouTube videos into high-quality, engaging blog posts using AI.",
+  "requestFramePermissions": [
+    "microphone",
+    "geolocation"
+  ]
+}
