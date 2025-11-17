@@ -136,8 +136,8 @@ function App() {
     setError(null);
   };
 
-  const handleDarkModeToggle = () => {
-    setIsDarkMode((prev) => !prev);
+  const handleThemeChange = (newTheme: ThemeMode) => {
+    setThemeMode(newTheme);
   };
 
   const videoId = getYouTubeVideoId(youtubeUrl);
