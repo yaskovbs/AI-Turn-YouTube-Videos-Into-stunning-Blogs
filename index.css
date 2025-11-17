@@ -1,0 +1,47 @@
+/* Adding custom styles for modern design */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: #0f0f0f;
+    --foreground: #ffffff;
+    --primary: #8b5cf6;
+    --primary-light: #a78bfa;
+    --secondary: #1f2937;
+    --accent: #06b6d4;
+    --border: #374151;
+    --text-muted: #9ca3af;
+  }
+
+  body {
+    @apply bg-[#0f0f0f] text-white font-sans antialiased;
+  }
+}
+
+@layer components {
+  .nav-button {
+    @apply px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2;
+  }
+
+  .nav-button-active {
+    @apply bg-gradient-to-r from-purple-600 to-cyan-500 text-white shadow-lg;
+  }
+
+  .nav-button-inactive {
+    @apply text-gray-400 hover:text-white hover:bg-gray-800;
+  }
+
+  .card-feature {
+    @apply bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-xl border border-gray-700 hover:border-purple-500 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20;
+  }
+
+  .btn-primary {
+    @apply px-6 py-3 rounded-lg font-semibold bg-gradient-to-r from-purple-600 to-cyan-500 text-white hover:from-purple-700 hover:to-cyan-600 transition-all duration-200 shadow-lg;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 rounded-lg font-semibold bg-gray-800 text-white border border-gray-700 hover:border-purple-500 transition-all duration-200;
+  }
+}
