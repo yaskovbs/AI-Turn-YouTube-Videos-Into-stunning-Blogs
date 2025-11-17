@@ -3,9 +3,16 @@ import { getYouTubeVideoId } from '../utils/youtube';
 import { decode, decodeAudioData, createPcmBlob } from '../utils/file';
 
 const getApiKey = () => {
-  const apiKey = process.env.GEMINI_API_KEY;
+  // First try to get from localStorage (user's custom key)
+  const localStorageKey = localStorage.getItem('gemini_api_key');
+  if (localStorageKey && localStorageKey.trim()) {
+    return localStorageKey.trim();
+  }
+  
+  // Fallback to environment variable
+  const apiKey = process.env.GEMINI_API_KEY || import.meta.env.VITE_GEMINI_API_KEY;
   if (!apiKey) {
-    throw new Error('GEMINI_API_KEY is not defined in environment variables.');
+    throw new Error('GEMINI_API_KEY is not defined. Please add your API key in the API Key Management section.');
   }
   return apiKey;
 };
