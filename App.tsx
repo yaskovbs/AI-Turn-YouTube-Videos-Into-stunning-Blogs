@@ -52,9 +52,9 @@ function App() {
 
   // Load theme from localStorage on mount
   useEffect(() => {
-    const savedTheme = localStorage.getItem('isDarkMode');
-    if (savedTheme !== null) {
-      setIsDarkMode(JSON.parse(savedTheme));
+    const savedThemeMode = localStorage.getItem('themeMode') as ThemeMode;
+    if (savedThemeMode) {
+      setThemeMode(savedThemeMode);
     }
 
     const storedUser = localStorage.getItem('userProfile');
@@ -84,9 +84,35 @@ function App() {
 
   }, []);
 
+  // Compute actual dark mode based on theme mode and system preference
+  useEffect(() => {
+    const applyTheme = () => {
+      let shouldBeDark = false;
+
+      if (themeMode === 'system') {
+        // Check system preference
+        shouldBeDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      } else {
+        shouldBeDark = themeMode === 'dark';
+      }
+
+      setIsDarkMode(shouldBeDark);
+    };
+
+    applyTheme();
+
+    // Listen for system theme changes if in system mode
+    if (themeMode === 'system') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const handleChange = () => applyTheme();
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
+    }
+  }, [themeMode]);
+
   // Apply dark/light mode classes to the body and save to localStorage
   useEffect(() => {
-    localStorage.setItem('isDarkMode', JSON.stringify(isDarkMode));
+    localStorage.setItem('themeMode', themeMode);
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
       document.body.classList.add('bg-gray-900', 'text-white');
@@ -96,7 +122,7 @@ function App() {
       document.body.classList.add('bg-white', 'text-gray-900');
       document.body.classList.remove('bg-gray-900', 'text-white');
     }
-  }, [isDarkMode]);
+  }, [isDarkMode, themeMode]);
 
   const handleLoginToggle = (loggedIn) => {
     if (loggedIn) {
