@@ -109,13 +109,7 @@ const Header = ({
                 <span className="text-sm font-medium">{currentUser.name}</span>
               </div>
             )}
-            <button
-              onClick={onDarkModeToggle}
-              aria-label="Toggle dark mode"
-              className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
-            >
-              {isDarkMode ? SUN_ICON : MOON_ICON}
-            </button>
+            <ThemeSelector currentTheme={themeMode} onThemeChange={onThemeChange} />
             <button
               onClick={() => onLoginToggle(!isLoggedIn)}
               className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 ${
@@ -123,6 +117,7 @@ const Header = ({
                   ? 'bg-red-600 hover:bg-red-700 text-white'
                   : 'bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white'
               }`}
+              data-testid="login-button"
             >
               {isLoggedIn ? 'Logout' : 'Login'}
             </button>
