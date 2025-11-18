@@ -83,8 +83,14 @@ const ApiKeyManagement = ({ showToast, setCurrentView }) => {
         '🔑 מפתח API של Google Gemini',
       ),
       React.createElement(
-        'div',
-        { className: 'mb-6' },
+        'form',
+        {
+          onSubmit: (e) => {
+            e.preventDefault();
+            handleSaveGeminiApiKey();
+          },
+          className: 'mb-6'
+        },
         React.createElement(
           'label',
           { htmlFor: 'geminiApiKey', className: 'block text-gray-300 text-sm font-bold mb-2' },
@@ -104,7 +110,7 @@ const ApiKeyManagement = ({ showToast, setCurrentView }) => {
         React.createElement(
           'button',
           {
-            onClick: handleSaveGeminiApiKey,
+            type: 'submit',
             className: 'mt-3 w-full bg-linear-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 shadow-lg hover:shadow-purple-500/50',
             'data-testid': 'save-gemini-key-button',
           },
@@ -150,8 +156,14 @@ const ApiKeyManagement = ({ showToast, setCurrentView }) => {
         'מפתח YouTube Data API v3:',
       ),
       React.createElement(
-        'div',
-        { className: 'mb-4' },
+        'form',
+        {
+          onSubmit: (e) => {
+            e.preventDefault();
+            handleSaveYouTubeApiKey();
+          },
+          className: 'mb-4'
+        },
         React.createElement(
           'label',
           { htmlFor: 'youtubeApiKey', className: 'block text-gray-300 text-sm font-bold mb-2' },
@@ -170,7 +182,7 @@ const ApiKeyManagement = ({ showToast, setCurrentView }) => {
         React.createElement(
           'button',
           {
-            onClick: handleSaveYouTubeApiKey,
+            type: 'submit',
             className: 'mt-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-200',
           },
           'שמור מפתח YouTube API',

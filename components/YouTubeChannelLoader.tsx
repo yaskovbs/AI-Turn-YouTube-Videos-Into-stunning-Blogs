@@ -197,24 +197,31 @@ const YouTubeChannelLoader = ({ showToast, isLoggedIn }: { showToast: (message: 
             <h3 className='text-xl font-bold text-blue-300 mb-4'>הזנת מפתח YouTube Data API v3:</h3>
 
             <div className='mb-4'>
-              <label htmlFor='youtubeApiKey' className='block text-gray-300 text-sm font-bold mb-2'>
-                מפתח API:
-              </label>
-              <input
-                type='password'
-                id='youtubeApiKey'
-                value={youtubeApiKey}
-                onChange={handleApiKeyChange}
-                placeholder='הזינו את מפתח ה-YouTube Data API שלכם'
-                className='shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600'
-                aria-label='YouTube Data API key input'
-              />
-              <button
-                onClick={handleSaveApiKey}
-                className='mt-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-200'
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleSaveApiKey();
+                }}
               >
-                שמור מפתח API
-              </button>
+                <label htmlFor='youtubeApiKey' className='block text-gray-300 text-sm font-bold mb-2'>
+                  מפתח API:
+                </label>
+                <input
+                  type='password'
+                  id='youtubeApiKey'
+                  value={youtubeApiKey}
+                  onChange={handleApiKeyChange}
+                  placeholder='הזינו את מפתח ה-YouTube Data API שלכם'
+                  className='shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600'
+                  aria-label='YouTube Data API key input'
+                />
+                <button
+                  type='submit'
+                  className='mt-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-200'
+                >
+                  שמור מפתח API
+                </button>
+              </form>
             </div>
 
             <div className='mb-4'>
