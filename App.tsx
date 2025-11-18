@@ -470,13 +470,7 @@ function App() {
               ),
             ),
           ),
-        ),
 
-        // Attribution (בלמטה)
-        React.createElement(
-          'div',
-          { className: 'text-center text-xs text-gray-600 mt-6' },
-          'יעקב ליאב בן סל'
         ),
       ),
     ),
