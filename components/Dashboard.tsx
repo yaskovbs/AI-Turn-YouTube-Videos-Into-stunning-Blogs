@@ -248,23 +248,23 @@ const Dashboard: React.FC<DashboardProps> = ({ showToast, currentUser }) => {
                       </div>
                       {blog.isPublished && domainSettings && (
                         <div className="text-sm text-purple-300 mb-4">
-                          <span className="font-semibold">כתובת:</span>
-                          <a
-                            href={domainSettings.customDomain
-                              ? `https://${domainSettings.customDomain}/${blog.id}`
-                              : domainSettings.subdomain
-                                ? `https://${domainSettings.subdomain}.yourblogsite.com/${blog.id}`
-                                : '#'}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-purple-300 hover:text-purple-100 underline ml-2"
-                          >
-                            {domainSettings.customDomain
-                              ? `${domainSettings.customDomain}/${blog.id}`
-                              : domainSettings.subdomain
-                                ? `${domainSettings.subdomain}.yourblogsite.com/${blog.id}`
-                                : 'הגדר דומיין להצגת כתובת'}
-                          </a>
+                          <span className="font-semibold">כתובת הבלוג:</span>
+                          {domainSettings && (domainSettings.customDomain || domainSettings.subdomain) ? (
+                            <a
+                              href={domainSettings.customDomain
+                                ? `https://${domainSettings.customDomain}/${blog.id}`
+                                : `https://${domainSettings.subdomain}.blog.ai/${blog.id}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-purple-300 hover:text-purple-100 underline ml-2 break-all"
+                            >
+                              {domainSettings.customDomain
+                                ? `${domainSettings.customDomain}/${blog.id}`
+                                : `${domainSettings.subdomain}.blog.ai/${blog.id}`}
+                            </a>
+                          ) : (
+                            <span className="text-gray-400 ml-2">הגדר דומיין בדשבורד להצגת כתובת אמיתית</span>
+                          )}
                         </div>
                       )}
                       </>
