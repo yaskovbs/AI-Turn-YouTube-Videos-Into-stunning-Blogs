@@ -39,10 +39,32 @@ const Header = ({
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showMenuPreview, setShowMenuPreview] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const menuPreviewRef = useRef<HTMLDivElement>(null);
   const loginButtonRef = useRef<HTMLButtonElement>(null);
 
-  // Close menu preview when clicking outside (but not on login button)
+  // Detect screen size for responsive behavior
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768); // md breakpoint
+    };
+
+    checkIsMobile();
+    window.addEventListener('resize', checkIsMobile);
+
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
+
+  // Always show menu preview on desktop when not logged in
+  useEffect(() => {
+    if (!isLoggedIn && !isMobile) {
+      setShowMenuPreview(true);
+    } else if (isMobile) {
+      setShowMenuPreview(false);
+    }
+  }, [isLoggedIn, isMobile]);
+
+  // Close menu preview when clicking outside (but not on login button) - only on mobile
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
@@ -55,14 +77,14 @@ const Header = ({
       }
     };
 
-    if (showMenuPreview) {
+    if (showMenuPreview && isMobile) {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showMenuPreview]);
+  }, [showMenuPreview, isMobile]);
 
   const navItems = [
     { name: 'בית', icon: HOME_ICON, view: 'home' },
@@ -156,20 +178,6 @@ const Header = ({
               </div>
             )}
             <ThemeSelector currentTheme={themeMode} onThemeChange={onThemeChange} />
-
-            {/* Niut Button - Menu Preview */}
-            {!isLoggedIn && (
-              <button
-                onClick={() => {
-                  if (!showMenuPreview) setShowMenuPreview(true);
-                }}
-                className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 bg-net shadow-net ${
-                  showMenuPreview ? 'scale-95' : ''
-                }`}
-              >
-                ניוט
-              </button>
-            )}
 
             {/* Login/Logout Button */}
             <div className="relative">
