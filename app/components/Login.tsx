@@ -1,28 +1,68 @@
-import React, { useEffect } from 'react';
-import { signIn } from '../services/authService';
+import React, { useState } from 'react';
+import { signIn, signInWithEmail, createAccount } from '../services/authService';
 
 const Login = ({ showToast }: { showToast: (message: string, type: string) => void }) => {
-  useEffect(() => {
-    // Auto-trigger Google sign-in on component mount for convenience
-    const timer = setTimeout(() => {
-      signIn();
-    }, 100);
-
-    return () => clearTimeout(timer);
-  }, []);
+  const [isLoginMode, setIsLoginMode] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleGoogleSignIn = () => {
     signIn();
   };
 
+  const handleEmailAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !password) {
+      showToast('אנא מלא את כל השדות', 'error');
+      return;
+    }
+
+    if (!isLoginMode && !name) {
+      showToast('אנא הכנס שם', 'error');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      if (isLoginMode) {
+        // Sign in with email and password
+        const result = await signInWithEmail(email, password);
+        // Since this is a component that gets re-rendered on auth, we need to handle success differently
+        // The auth result will be handled by the parent component's onSignIn callback
+        localStorage.setItem('userProfile', JSON.stringify(result.profile));
+        window.location.reload(); // Refresh to trigger auth check
+        showToast('התחברת בהצלחה!', 'success');
+      } else {
+        // Create account
+        await createAccount(email, password, name);
+        showToast('חשבון נוצר בהצלחה! כעת התחבר', 'success');
+        setIsLoginMode(true);
+        setPassword('');
+      }
+    } catch (error) {
+      showToast((error instanceof Error ? error.message : 'שגיאה באימות'), 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const toggleMode = () => {
+    setIsLoginMode(!isLoginMode);
+    setName('');
+    setPassword('');
+    setEmail('');
+  };
+
   return React.createElement(
     'div',
     {
-      className: 'min-h-screen flex items-center justify-center bg-linear-to-br from-gray-950 via-gray-900 to-gray-950 px-4'
+      className: 'fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end justify-center animate-in slide-in-from-bottom-2 duration-300'
     },
     React.createElement(
       'div',
-      { className: 'w-full max-w-md' },
+      { className: 'bg-gray-900/95 backdrop-blur-md rounded-lg border border-gray-700 shadow-2xl max-h-[90vh] overflow-hidden sm:w-full max-w-md w-[95%] mx-4' },
       // Header with logo
       React.createElement(
         'div',
@@ -58,12 +98,12 @@ const Login = ({ showToast }: { showToast: (message: string, type: string) => vo
           React.createElement(
             'h2',
             { className: 'text-2xl font-bold text-white mb-4' },
-            'התחברות עם Google'
+            isLoginMode ? 'התחברות' : 'יצירת חשבון'
           ),
           React.createElement(
             'p',
             { className: 'text-gray-400' },
-            'התחברו בחשבון Google שלכם כדי להתחיל'
+            isLoginMode ? 'התחברו לחשבון הקיים או צרו חשבון חדש' : 'מלאו את הפרטים כדי ליצור חשבון חדש'
           )
         ),
 
@@ -99,6 +139,115 @@ const Login = ({ showToast }: { showToast: (message: string, type: string) => vo
               })
             ),
             'התחברות עם Google'
+          ),
+
+          // Email/Password Form
+          React.createElement(
+            'div',
+            { className: 'relative my-6' },
+            React.createElement(
+              'div',
+              { className: 'absolute inset-0 flex items-center' },
+              React.createElement(
+                'div',
+                { className: 'w-full border-t border-gray-600' }
+              )
+            ),
+            React.createElement(
+              'div',
+              { className: 'relative flex justify-center text-sm' },
+              React.createElement(
+                'span',
+                { className: 'px-2 bg-gray-900 text-gray-400' },
+                'או'
+              )
+            )
+          ),
+
+          React.createElement(
+            'form',
+            { onSubmit: handleEmailAuth, className: 'space-y-4' },
+            // Name field (only for create account)
+            !isLoginMode && React.createElement(
+              'div',
+              null,
+              React.createElement(
+                'label',
+                { htmlFor: 'name', className: 'block text-gray-300 text-sm font-bold mb-2' },
+                'שם מלא'
+              ),
+              React.createElement('input', {
+                type: 'text',
+                id: 'name',
+                value: name,
+                onChange: (e) => setName(e.target.value),
+                className: 'w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500',
+                placeholder: 'הכנס את שמך',
+              })
+            ),
+
+            // Email field
+            React.createElement(
+              'div',
+              null,
+              React.createElement(
+                'label',
+                { htmlFor: 'email', className: 'block text-gray-300 text-sm font-bold mb-2' },
+                'אימייל'
+              ),
+              React.createElement('input', {
+                type: 'email',
+                id: 'email',
+                value: email,
+                onChange: (e) => setEmail(e.target.value),
+                className: 'w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500',
+                placeholder: 'הכנס את כתובת האימייל',
+              })
+            ),
+
+            // Password field
+            React.createElement(
+              'div',
+              null,
+              React.createElement(
+                'label',
+                { htmlFor: 'password', className: 'block text-gray-300 text-sm font-bold mb-2' },
+                'סיסמה'
+              ),
+              React.createElement('input', {
+                type: 'password',
+                id: 'password',
+                value: password,
+                onChange: (e) => setPassword(e.target.value),
+                className: 'w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500',
+                placeholder: 'הכנס סיסמה חזקה',
+              })
+            ),
+
+            // Submit button
+            React.createElement(
+              'button',
+              {
+                type: 'submit',
+                disabled: isLoading,
+                className: 'w-full px-6 py-3 bg-linear-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white rounded-lg font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed',
+              },
+              isLoading ? 'טוען...' : (isLoginMode ? 'התחבר' : 'צור חשבון')
+            ),
+          ),
+
+          // Toggle between login and create account
+          React.createElement(
+            'div',
+            { className: 'text-center mt-4' },
+            React.createElement(
+              'button',
+              {
+                onClick: toggleMode,
+                className: 'text-purple-400 hover:text-purple-300 text-sm underline',
+              },
+              isLoginMode ? 'אין לך חשבון? צור אחד כעת' : 'יש לך כבר חשבון? התחבר'
+            )
           ),
 
           // Features preview

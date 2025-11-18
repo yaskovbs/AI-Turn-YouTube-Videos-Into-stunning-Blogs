@@ -65,23 +65,18 @@ const ContentRenderer: React.FC<ContentRendererProps> = ({
   handleShareBlog,
   handleViewFullBlog,
 }) => {
-  if (!isLoggedIn && currentView !== 'home' && currentView !== 'faq' && currentView !== 'contact' && currentView !== 'terms' && currentView !== 'privacy' && currentView !== 'youtube-channel' && currentView !== 'api-key' && currentView !== 'adsense') {
-    return React.createElement(
-      'div',
-      { className: 'text-center text-xl text-red-400 mt-20' },
-      'Please log in to use the AI features.',
-    );
-  }
+  const showLoginModal = !isLoggedIn && currentView !== 'home' && currentView !== 'faq' && currentView !== 'contact' && currentView !== 'terms' && currentView !== 'privacy' && currentView !== 'youtube-channel' && currentView !== 'api-key' && currentView !== 'adsense';
 
-  switch (currentView) {
-    case 'home':
-      return React.createElement(Home, { showToast });
-    case 'login':
-      return React.createElement(Login, { showToast });
-    case 'blog':
-      return React.createElement(
-        'section',
-        { className: 'text-center mb-8 max-w-4xl mx-auto' },
+  const renderContent = () => {
+    switch (currentView) {
+      case 'home':
+        return React.createElement(Home, { showToast });
+      case 'login':
+        return React.createElement(Login, { showToast });
+      case 'blog':
+        return React.createElement(
+          'section',
+          { className: 'text-center mb-8 max-w-4xl mx-auto' },
         React.createElement(
           'h2',
           { className: 'text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-4 leading-tight text-blue-400' },
@@ -222,6 +217,13 @@ const ContentRenderer: React.FC<ContentRendererProps> = ({
                     title: blogGenerationResponse.videoTitle,
                     className: 'w-full md:w-80 h-48 md:h-44 rounded-lg',
                     allowFullScreen: true,
+                    onError: (e: any) => {
+                      e.target.style.display = 'none';
+                      const placeholder = document.createElement('div');
+                      placeholder.className = 'w-full md:w-80 h-48 md:h-44 rounded-lg bg-gray-700 flex items-center justify-center text-gray-400';
+                      placeholder.innerHTML = '<div class="text-center">Video embed blocked or unavailable<br><span class="text-sm">Check network restrictions</span></div>';
+                      e.target.parentNode.appendChild(placeholder);
+                    },
                   })
                 ),
                 // Blog Content Preview
@@ -364,6 +366,15 @@ const ContentRenderer: React.FC<ContentRendererProps> = ({
         'Select an AI feature from the navigation.',
       );
   }
+  };
+
+  const content = renderContent();
+  return React.createElement(
+    React.Fragment,
+    null,
+    content,
+    showLoginModal && React.createElement(Login, { showToast })
+  );
 };
 
 export default ContentRenderer;

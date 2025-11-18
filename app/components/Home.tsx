@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { signIn } from '../services/authService';
 
 const Home = ({ showToast }: { showToast: (message: string, type: string) => void }) => {
   // Environment configuration for real, configurable stats

@@ -92,6 +92,7 @@ export const initGoogleSignIn = (
     },
     auto_select: false,
     cancel_on_tap_outside: true,
+    ux_mode: 'popup',
   });
 
   // You can also render a one-tap prompt if desired
@@ -147,6 +148,53 @@ export const requestAdditionalScopes = (newScopes: string[]) => {
       include_granted_scopes: true,
     });
   }
+};
+
+// Simulate email/password authentication (client-side only for demo)
+export const signInWithEmail = async (email: string, password: string): Promise<AuthResult> => {
+  // Simple validation - in a real app, this would be server-side
+  if (!email || !password) {
+    throw new Error('אימייל וסיסמה נדרשים');
+  }
+
+  // Check if user exists in localStorage (demo purpose)
+  const users = JSON.parse(localStorage.getItem('demoUsers') || '[]');
+  const user = users.find((u: any) => u.email === email && u.password === password);
+
+  if (user) {
+    return {
+      idToken: `demo-token-${Date.now()}`, // Mock token
+      accessToken: null,
+      profile: user.profile
+    };
+  } else {
+    throw new Error('אימייל או סיסמה שגויים');
+  }
+};
+
+// Demo function to create a user account
+export const createAccount = async (email: string, password: string, name: string): Promise<void> => {
+  const users = JSON.parse(localStorage.getItem('demoUsers') || '[]');
+
+  // Check if user already exists
+  if (users.some((u: any) => u.email === email)) {
+    throw new Error('משתמש כבר קיים עם אימייל זה');
+  }
+
+  // Create new user
+  const newUser = {
+    email,
+    password,
+    profile: {
+      id: `demo-${Date.now()}`,
+      name,
+      email,
+      picture: `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`
+    }
+  };
+
+  users.push(newUser);
+  localStorage.setItem('demoUsers', JSON.stringify(users));
 };
 
 const fetchUserInfo = async (accessToken: string): Promise<AuthResult> => {
