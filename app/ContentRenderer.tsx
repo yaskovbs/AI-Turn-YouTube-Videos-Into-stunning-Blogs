@@ -9,6 +9,7 @@ import TextToSpeech from './components/TextToSpeech';
 import Home from './components/Home';
 import YouTubeChannelLoader from './components/YouTubeChannelLoader';
 import ApiKeyManagement from './components/ApiKeyManagement';
+import AdSenseManager from './components/AdSenseManager';
 import FAQ from './components/FAQ';
 import Contact from './components/Contact';
 import Terms from './components/Terms';
@@ -37,6 +38,7 @@ interface ContentRendererProps {
   handleDownloadPdf: () => void;
   handleCopyBlog: () => void;
   handleShareBlog: () => void;
+  handleViewFullBlog: () => void;
 }
 
 const ContentRenderer: React.FC<ContentRendererProps> = ({
@@ -60,8 +62,9 @@ const ContentRenderer: React.FC<ContentRendererProps> = ({
   handleDownloadPdf,
   handleCopyBlog,
   handleShareBlog,
+  handleViewFullBlog,
 }) => {
-  if (!isLoggedIn && currentView !== 'home' && currentView !== 'faq' && currentView !== 'contact' && currentView !== 'terms' && currentView !== 'privacy' && currentView !== 'youtube-channel' && currentView !== 'api-key') {
+  if (!isLoggedIn && currentView !== 'home' && currentView !== 'faq' && currentView !== 'contact' && currentView !== 'terms' && currentView !== 'privacy' && currentView !== 'youtube-channel' && currentView !== 'api-key' && currentView !== 'adsense') {
     return React.createElement(
       'div',
       { className: 'text-center text-xl text-red-400 mt-20' },
@@ -194,60 +197,131 @@ const ContentRenderer: React.FC<ContentRendererProps> = ({
         blogGenerationResponse &&
           React.createElement(
             'div',
-            { className: 'mt-8 w-full max-w-4xl bg-gray-800 p-6 rounded-lg shadow-xl' },
-            React.createElement(
-              'h3',
-              { className: 'text-xl font-bold text-blue-300 mb-4' },
-              blogGenerationResponse.videoTitle
-            ),
+            { className: 'mt-8 w-full max-w-6xl mx-auto bg-gray-800 p-6 rounded-lg shadow-xl' },
+            // Blog Header with Title and Thumbnail
             React.createElement(
               'div',
-              { className: 'mb-4' },
-              React.createElement('iframe', {
-                src: blogGenerationResponse.videoEmbedUrl,
-                title: blogGenerationResponse.videoTitle,
-                className: 'w-full h-64 rounded-lg',
-                allowFullScreen: true,
-              })
+              { className: 'mb-6' },
+              React.createElement(
+                'h3',
+                { className: 'text-2xl font-bold text-blue-300 mb-4 text-center' },
+                blogGenerationResponse.videoTitle
+              ),
+              React.createElement(
+                'div',
+                { className: 'flex flex-col md:flex-row gap-6 items-start' },
+                // Video/Thumbnail Section
+                React.createElement(
+                  'div',
+                  { className: 'shrink-0' },
+                  React.createElement('iframe', {
+                    src: blogGenerationResponse.videoEmbedUrl,
+                    title: blogGenerationResponse.videoTitle,
+                    className: 'w-full md:w-80 h-48 md:h-44 rounded-lg',
+                    allowFullScreen: true,
+                  })
+                ),
+                // Blog Content Preview
+                React.createElement(
+                  'div',
+                  { className: 'flex-1' },
+                  React.createElement('div', {
+                    className: 'prose prose-invert max-w-none text-sm',
+                    dangerouslySetInnerHTML: {
+                      __html: formatMarkdownToHtml(
+                        blogGenerationResponse.blogContent.length > 500
+                          ? blogGenerationResponse.blogContent.substring(0, 500) + '...'
+                          : blogGenerationResponse.blogContent
+                      )
+                    },
+                  }),
+                  blogGenerationResponse.blogContent.length > 500 && React.createElement(
+                    'p',
+                    { className: 'text-gray-400 text-xs mt-2' },
+                    'Click "View Full Blog" to see complete content'
+                  )
+                )
+              )
             ),
-            React.createElement('div', {
-              className: 'prose prose-invert max-w-none',
-              dangerouslySetInnerHTML: { __html: formatMarkdownToHtml(blogGenerationResponse.blogContent) },
-            }),
+
+            // Action Buttons
             React.createElement(
               'div',
-              { className: 'mt-6 flex flex-wrap gap-4' },
+              { className: 'mt-6 flex flex-wrap gap-4 justify-center' },
               React.createElement(
                 'button',
                 {
                   onClick: handleDownloadBlog,
-                  className: 'bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-colors duration-200',
+                  className: 'bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline transition-colors duration-200 flex items-center gap-2',
                 },
-                'Download as TXT'
+                '⬇️ הורד כקובץ TXT'
               ),
               React.createElement(
                 'button',
                 {
                   onClick: handleDownloadPdf,
-                  className: 'bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-colors duration-200',
+                  className: 'bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline transition-colors duration-200 flex items-center gap-2',
                 },
-                'Download as PDF'
+                '📄 הורד כ-PDF'
               ),
               React.createElement(
                 'button',
                 {
                   onClick: handleCopyBlog,
-                  className: 'bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-colors duration-200',
+                  className: 'bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline transition-colors duration-200 flex items-center gap-2',
                 },
-                'Copy to Clipboard'
+                '📋 העתק ללוח'
               ),
               React.createElement(
                 'button',
                 {
                   onClick: handleShareBlog,
-                  className: 'bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-colors duration-200',
+                  className: 'bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline transition-colors duration-200 flex items-center gap-2',
                 },
-                'Share'
+                '🚀 שתף'
+              ),
+              React.createElement(
+                'button',
+                {
+                  onClick: handleViewFullBlog,
+                  className: 'bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline transition-colors duration-200 flex items-center gap-2',
+                },
+                '📖 צפה בבלוג המלא'
+              )
+            ),
+
+            // Full Blog Content (initially hidden, shown when user clicks "View Full Blog")
+            React.createElement(
+              'div',
+              {
+                id: 'full-blog-content',
+                className: 'mt-8 border-t border-gray-700 pt-8',
+                style: { display: 'none' }
+              },
+              React.createElement(
+                'h4',
+                { className: 'text-xl font-bold text-white mb-4 text-center' },
+                'הבלוג המלא'
+              ),
+              React.createElement('div', {
+                className: 'prose prose-invert max-w-none',
+                dangerouslySetInnerHTML: { __html: formatMarkdownToHtml(blogGenerationResponse.blogContent) },
+              }),
+
+              // AdSense Integration Example - Header Banner
+              React.createElement(
+                'div',
+                { className: 'mt-8 text-center' },
+                React.createElement(
+                  'p',
+                  { className: 'text-sm text-gray-400 mb-4' },
+                  'פרסומת:'
+                ),
+                React.createElement(
+                  'div',
+                  { className: 'bg-gray-700 p-4 rounded-lg' },
+                  'AdSense Banner Ad - Configure in AdSense Manager'
+                )
               )
             )
           )
@@ -270,6 +344,8 @@ const ContentRenderer: React.FC<ContentRendererProps> = ({
       return React.createElement(YouTubeChannelLoader, { showToast, isLoggedIn });
     case 'api-key':
       return React.createElement(ApiKeyManagement, { showToast, setCurrentView });
+    case 'adsense':
+      return React.createElement(AdSenseManager, { showToast });
     case 'faq':
       return React.createElement(FAQ, { showToast });
     case 'contact':
