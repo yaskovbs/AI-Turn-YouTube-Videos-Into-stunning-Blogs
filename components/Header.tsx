@@ -40,6 +40,9 @@ const Header = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showMenuPreview, setShowMenuPreview] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const menuPreviewRef = useRef<HTMLDivElement>(null);
   const loginButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -64,7 +67,63 @@ const Header = ({
     }
   }, [isLoggedIn, isMobile]);
 
-  // Close menu preview when clicking outside (but not on login button) - only on mobile
+  // Mouse event handlers for drag functionality
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!menuPreviewRef.current) return;
+
+    setIsDragging(true);
+    const rect = menuPreviewRef.current.getBoundingClientRect();
+    setDragOffset({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+
+    e.preventDefault();
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!isDragging || !menuPreviewRef.current) return;
+
+    const newX = e.clientX - dragOffset.x;
+    const newY = e.clientY - dragOffset.y;
+
+    // Constrain to viewport bounds
+    const rect = menuPreviewRef.current.getBoundingClientRect();
+    const maxX = window.innerWidth - rect.width;
+    const maxY = window.innerHeight - rect.height;
+
+    setMenuPosition({
+      x: Math.max(0, Math.min(newX, maxX)),
+      y: Math.max(0, Math.min(newY, maxY)),
+    });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  // Add global mouse event listeners when dragging
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+
+      // Prevent text selection while dragging
+      document.body.style.userSelect = 'none';
+    } else {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.body.style.userSelect = '';
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.body.style.userSelect = '';
+    };
+  }, [isDragging, dragOffset]);
+
+  // Close menu preview when clicking outside (but not on login button)
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
@@ -77,14 +136,14 @@ const Header = ({
       }
     };
 
-    if (showMenuPreview && isMobile) {
+    if (showMenuPreview) {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showMenuPreview, isMobile]);
+  }, [showMenuPreview]);
 
   const navItems = [
     { name: 'בית', icon: HOME_ICON, view: 'home' },
@@ -184,9 +243,30 @@ const Header = ({
               {showMenuPreview && !isLoggedIn && (
                 <div
                   ref={menuPreviewRef}
-                  className="absolute top-full right-0 mt-2 bg-gray-800 border border-gray-700 rounded-lg p-2 whitespace-nowrap z-50"
+                  className="bg-gray-800 border border-gray-700 rounded-lg p-2 whitespace-nowrap z-50 shadow-lg"
+                  style={{
+                    position: isDragging ? 'fixed' : 'absolute',
+                    top: isDragging ? menuPosition.y : 'calc(100% + 8px)',
+                    right: isDragging ? 'auto' : 0,
+                    left: isDragging ? menuPosition.x : 'auto',
+                    cursor: isDragging ? 'grabbing' : 'grab',
+                    zIndex: 9999,
+                  }}
                 >
-                  <p className="text-xs text-gray-300 mb-1">התחבר כדי לגשת לכלי AI</p>
+                  <div
+                    className="flex justify-between items-center mb-1 cursor-grab select-none"
+                    onMouseDown={handleMouseDown}
+                  >
+                    <p className="text-xs text-gray-300">התחבר כדי לגשת לכלי AI</p>
+                    <button
+                      onClick={() => setShowMenuPreview(false)}
+                      className="text-gray-400 hover:text-gray-200 text-sm ml-2 w-5 h-5 flex items-center justify-center hover:bg-gray-700 rounded"
+                      title="סגור"
+                      onMouseDown={(e) => e.stopPropagation()} // Prevent drag when clicking close
+                    >
+                      ✕
+                    </button>
+                  </div>
                   <button
                     onClick={() => {
                       setShowMenuPreview(false);
