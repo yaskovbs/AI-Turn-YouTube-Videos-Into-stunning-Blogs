@@ -356,6 +356,128 @@ function App() {
             'Built with ❤️ for content creators'
           ),
         ),
+
+        // Footer Navigation Menu (בלמטה)
+        React.createElement(
+          'div',
+          { className: 'border-t border-gray-700/50 pt-6 mt-6' },
+          React.createElement(
+            'h3',
+            { className: 'text-center text-lg font-bold text-white mb-4' },
+            'כלי AI מתקדמים'
+          ),
+          React.createElement(
+            'div',
+            { className: 'flex flex-wrap justify-center gap-3 mb-4' },
+            // First row of tools
+            React.createElement(
+              'div',
+              { className: 'flex flex-wrap justify-center gap-3 mb-2' },
+              React.createElement(
+                'button',
+                {
+                  onClick: () => setCurrentView('image-edit'),
+                  className: 'px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm font-medium text-gray-300 hover:text-white transition-all duration-200 flex items-center gap-2',
+                },
+                React.createElement('span', null, '✏️'),
+                'עורך תמונות'
+              ),
+              React.createElement(
+                'button',
+                {
+                  onClick: () => setCurrentView('video-gen'),
+                  className: 'px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm font-medium text-gray-300 hover:text-white transition-all duration-200 flex items-center gap-2',
+                },
+                React.createElement('span', null, '🎬'),
+                'מחולל וידאו'
+              ),
+              React.createElement(
+                'button',
+                {
+                  onClick: () => setCurrentView('video-analyze'),
+                  className: 'px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm font-medium text-gray-300 hover:text-white transition-all duration-200 flex items-center gap-2',
+                },
+                React.createElement('span', null, '📹'),
+                'מנתח וידאו'
+              ),
+              React.createElement(
+                'button',
+                {
+                  onClick: () => setCurrentView('chatbot'),
+                  className: 'px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm font-medium text-gray-300 hover:text-white transition-all duration-200 flex items-center gap-2',
+                },
+                React.createElement('span', null, '💬'),
+                'צ\'אט בוט'
+              ),
+              React.createElement(
+                'button',
+                {
+                  onClick: () => setCurrentView('voice-assistant'),
+                  className: 'px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm font-medium text-gray-300 hover:text-white transition-all duration-200 flex items-center gap-2',
+                },
+                React.createElement('span', null, '🎤'),
+                'עוזר קולי'
+              ),
+            ),
+            // Second row of tools
+            React.createElement(
+              'div',
+              { className: 'flex flex-wrap justify-center gap-3' },
+              React.createElement(
+                'button',
+                {
+                  onClick: () => setCurrentView('text-to-speech'),
+                  className: 'px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm font-medium text-gray-300 hover:text-white transition-all duration-200 flex items-center gap-2',
+                },
+                React.createElement('span', null, '🔊'),
+                'טקסט לדיבור'
+              ),
+              React.createElement(
+                'button',
+                {
+                  onClick: () => setCurrentView('youtube-channel'),
+                  className: 'px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm font-medium text-gray-300 hover:text-white transition-all duration-200 flex items-center gap-2',
+                },
+                React.createElement('span', null, '📺'),
+                'ערוץ יוטיוב שלי'
+              ),
+              React.createElement(
+                'button',
+                {
+                  onClick: () => setCurrentView('api-key'),
+                  className: 'px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm font-medium text-gray-300 hover:text-white transition-all duration-200 flex items-center gap-2',
+                },
+                React.createElement('span', null, '🔑'),
+                'מפתח API'
+              ),
+              React.createElement(
+                'button',
+                {
+                  onClick: () => setCurrentView('faq'),
+                  className: 'px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm font-medium text-gray-300 hover:text-white transition-all duration-200 flex items-center gap-2',
+                },
+                React.createElement('span', null, '❓'),
+                'שאלות נפוצות'
+              ),
+              React.createElement(
+                'button',
+                {
+                  onClick: () => setCurrentView('contact'),
+                  className: 'px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm font-medium text-gray-300 hover:text-white transition-all duration-200 flex items-center gap-2',
+                },
+                React.createElement('span', null, '📧'),
+                'צור קשר'
+              ),
+            ),
+          ),
+        ),
+
+        // Attribution (בלמטה)
+        React.createElement(
+          'div',
+          { className: 'text-center text-xs text-gray-600 mt-6' },
+          'יעקב ליאב בן סל'
+        ),
       ),
     ),
     toast && React.createElement(Toast, {
