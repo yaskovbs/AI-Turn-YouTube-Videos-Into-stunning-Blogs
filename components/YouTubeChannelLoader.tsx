@@ -176,7 +176,7 @@ const YouTubeChannelLoader = ({ showToast, isLoggedIn }: { showToast: (message: 
       </h2>
       <p className='text-lg text-gray-300 mb-4'>
         כאן תוכלו לנהל את ערוץ היוטיוב שלכם על ידי שילוב ה-YouTube Data API.
-        התכונה הזו תאפשר לכם להעלות סרטונים, לנהל פלייליסטים, לצפות בנתוני ערוץ ולהמיר את כל הסרטונים לבלוגים אוטומטית.
+        התכונה הזו תאפשר לכם להעלות סרטונים, לנהל פלייליסטים, לצפות בנתוני ערוץ ועוד, הכל מתוך AI Studio.
       </p>
 
       {/* Enhanced security warning */}
