@@ -37,7 +37,7 @@ const Home = ({ showToast }: { showToast: (message: string, type: string) => voi
       React.createElement(
         'h2',
         { className: 'text-4xl md:text-6xl font-black mb-6 bg-linear-to-r from-purple-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent' },
-        'הפוך יוטיוב לבלוגים מושלמים!',
+        'הפוך סרטוני יוטיוב לבלוגים מושלמים!',
       ),
       React.createElement(
         'p',
