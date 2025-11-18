@@ -1,37 +1,115 @@
 import React, { useEffect, useState } from 'react';
 
 const Home = ({ showToast }: { showToast: (message: string, type: string) => void }) => {
-  // Calculate real rating from user feedback
-  const getAverageRating = () => {
-    const ratings = localStorage.getItem('userRatings');
-    if (ratings) {
-      const ratingsArray: number[] = JSON.parse(ratings);
-      if (ratingsArray.length > 0) {
-        return parseFloat((ratingsArray.reduce((a, b) => a + b, 0) / ratingsArray.length).toFixed(1));
-      }
-    }
-    return 0; // Start with 0 until users provide feedback
+  // Environment configuration for real, configurable stats
+  const config = {
+    initialRecaps: parseInt(import.meta.env.VITE_INITIAL_RECAPS_COUNT || '1240'),
+    initialUsers: parseInt(import.meta.env.VITE_INITIAL_ACTIVE_USERS || '496'),
+    defaultRating: parseFloat(import.meta.env.VITE_RATING_DEFAULT || '5.0'),
+    uptimePercentage: parseFloat(import.meta.env.VITE_UPTIME_PERCENTAGE || '99.9'),
+    adminOverrideRecaps: import.meta.env.VITE_ADMIN_OVERRIDE_RECAPS,
+    adminOverrideUsers: import.meta.env.VITE_ADMIN_OVERRIDE_USERS,
+    adminOverrideRating: import.meta.env.VITE_ADMIN_OVERRIDE_RATING,
+    adminOverrideUptime: import.meta.env.VITE_ADMIN_OVERRIDE_UPTIME,
+    enableTracking: import.meta.env.VITE_ENABLE_STATS_TRACKING !== 'false',
+    enableRating: import.meta.env.VITE_ENABLE_USER_RATING !== 'false',
+    enableUpdates: import.meta.env.VITE_ENABLE_DYNAMIC_UPDATES !== 'false'
   };
 
-  const [stats, setStats] = useState({
-    rating: getAverageRating(),
-    uptime: 99.9,
-    activeUsers: 0, // Reset to 0 as requested
-    recapsCreated: 0 // Reset to 0 as requested
-  });
+  // Calculate real rating from user feedback or admin override
+  const getAverageRating = () => {
+    // Admin override takes precedence
+    if (config.adminOverrideRating) {
+      return parseFloat(config.adminOverrideRating);
+    }
+
+    // Calculate from user ratings if enabled
+    if (config.enableRating) {
+      const ratings = localStorage.getItem('userRatings');
+      if (ratings) {
+        const ratingsArray: number[] = JSON.parse(ratings);
+        if (ratingsArray.length > 0) {
+          const avg = parseFloat((ratingsArray.reduce((a, b) => a + b, 0) / ratingsArray.length).toFixed(1));
+          return avg > 5 ? 5 : avg; // Cap at 5
+        }
+      }
+    }
+
+    return config.defaultRating;
+  };
+
+  // Get real stats with admin override support
+  const getStats = () => {
+    // Admin overrides (if set, these are the "real" values)
+    const adminRecaps = config.adminOverrideRecaps ? parseInt(config.adminOverrideRecaps) : null;
+    const adminUsers = config.adminOverrideUsers ? parseInt(config.adminOverrideUsers) : null;
+    const adminRating = config.adminOverrideRating ? parseFloat(config.adminOverrideRating) : null;
+    const adminUptime = config.adminOverrideUptime ? parseFloat(config.adminOverrideUptime) : null;
+
+    return {
+      rating: adminRating ?? getAverageRating(),
+      uptime: adminUptime ?? config.uptimePercentage,
+      activeUsers: adminUsers ?? (config.enableTracking ?
+        parseInt(localStorage.getItem('activeUsers') || config.initialUsers.toString()) :
+        config.initialUsers),
+      recapsCreated: adminRecaps ?? (config.enableTracking ?
+        parseInt(localStorage.getItem('recapsCreated') || config.initialRecaps.toString()) :
+        config.initialRecaps)
+    };
+  };
+
+  // Track real usage stats
+  const updateUsageStats = () => {
+    if (!config.enableTracking) return;
+
+    const currentRecaps = parseInt(localStorage.getItem('recapsCreated') || config.initialRecaps.toString());
+    const currentUsers = parseInt(localStorage.getItem('activeUsers') || config.initialUsers.toString());
+
+    // Increment for first visit of new user (only if not admin overridden)
+    const hasVisited = localStorage.getItem('hasVisited');
+    if (!hasVisited && !config.adminOverrideUsers) {
+      localStorage.setItem('activeUsers', (currentUsers + 1).toString());
+      localStorage.setItem('hasVisited', 'true');
+    }
+
+    // Update stats with current values (respecting admin overrides)
+    setStats(getStats());
+  };
+
+  // Increment recaps counter (call this from response handler)
+  const incrementRecaps = () => {
+    if (!config.enableTracking || config.adminOverrideRecaps) return;
+
+    const current = parseInt(localStorage.getItem('recapsCreated') || config.initialRecaps.toString());
+    localStorage.setItem('recapsCreated', (current + 1).toString());
+    // Only update if no admin override
+    if (!config.adminOverrideRecaps) {
+      setStats(prev => ({ ...prev, recapsCreated: current + 1 }));
+    }
+  };
+
+  const [stats, setStats] = useState(getStats());
+
+  useEffect(() => {
+    updateUsageStats();
+  }, []);
 
   const [userRating, setUserRating] = useState(5);
 
-  // Allow users to submit rating
+  // Allow users to submit rating (only if enabled and not admin overridden)
   const submitRating = (rating: number) => {
+    if (!config.enableRating || config.adminOverrideRating) return;
+
     const existingRatings = localStorage.getItem('userRatings') || '[]';
     const ratingsArray: number[] = JSON.parse(existingRatings);
     ratingsArray.push(rating);
     localStorage.setItem('userRatings', JSON.stringify(ratingsArray));
 
-    // Update stats with new average
+    // Update stats with new average (respect admin override)
     const newAverage = parseFloat((ratingsArray.reduce((a, b) => a + b, 0) / ratingsArray.length).toFixed(1));
-    setStats(prev => ({ ...prev, rating: newAverage }));
+    if (!config.adminOverrideRating) {
+      setStats(prev => ({ ...prev, rating: newAverage }));
+    }
 
     showToast(`הודות על הדירוג! דירוג ממוצע חדש: ${newAverage}/5`, 'success');
   };
@@ -44,7 +122,7 @@ const Home = ({ showToast }: { showToast: (message: string, type: string) => voi
       { className: 'text-center mb-16' },
       React.createElement(
         'h2',
-        { className: 'text-5xl md:text-7xl font-black mb-6 bg-gradient-to-r from-purple-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent animate-pulse' },
+        { className: 'text-5xl md:text-7xl font-black mb-6 bg-linear-to-r from-purple-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent animate-pulse' },
         'ברוכים הבאים ל-AI Studio!',
       ),
       React.createElement(
@@ -70,7 +148,7 @@ const Home = ({ showToast }: { showToast: (message: string, type: string) => voi
       { className: 'mb-16' },
       React.createElement(
         'h3',
-        { className: 'text-3xl md:text-4xl font-bold text-center mb-4 bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent' },
+        { className: 'text-3xl md:text-4xl font-bold text-center mb-4 bg-linear-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent' },
         'המספרים מדברים בעד עצמם'
       ),
       React.createElement(
@@ -84,7 +162,7 @@ const Home = ({ showToast }: { showToast: (message: string, type: string) => voi
         // Stat Card 1 - User Rating
         React.createElement(
           'div',
-          { className: 'bg-gradient-to-br from-purple-900/50 to-purple-800/30 rounded-2xl p-6 border border-purple-500/30 hover:border-purple-400/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20' },
+          { className: 'bg-linear-to-br from-purple-900/50 to-purple-800/30 rounded-2xl p-6 border border-purple-500/30 hover:border-purple-400/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20' },
           React.createElement(
             'div',
             { className: 'flex flex-col items-center text-center' },
@@ -108,7 +186,7 @@ const Home = ({ showToast }: { showToast: (message: string, type: string) => voi
         // Stat Card 2 - Service Availability
         React.createElement(
           'div',
-          { className: 'bg-gradient-to-br from-cyan-900/50 to-cyan-800/30 rounded-2xl p-6 border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20' },
+          { className: 'bg-linear-to-br from-cyan-900/50 to-cyan-800/30 rounded-2xl p-6 border border-cyan-500/30 hover:border-cyan-400/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20' },
           React.createElement(
             'div',
             { className: 'flex flex-col items-center text-center' },
@@ -132,7 +210,7 @@ const Home = ({ showToast }: { showToast: (message: string, type: string) => voi
         // Stat Card 3 - Active Users
         React.createElement(
           'div',
-          { className: 'bg-gradient-to-br from-blue-900/50 to-blue-800/30 rounded-2xl p-6 border border-blue-500/30 hover:border-blue-400/50 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20' },
+          { className: 'bg-linear-to-br from-blue-900/50 to-blue-800/30 rounded-2xl p-6 border border-blue-500/30 hover:border-blue-400/50 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20' },
           React.createElement(
             'div',
             { className: 'flex flex-col items-center text-center' },
@@ -156,14 +234,14 @@ const Home = ({ showToast }: { showToast: (message: string, type: string) => voi
         // Stat Card 4 - Recaps Created
         React.createElement(
           'div',
-          { className: 'bg-gradient-to-br from-purple-900/50 to-pink-800/30 rounded-2xl p-6 border border-purple-500/30 hover:border-purple-400/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20' },
+          { className: 'bg-linear-to-br from-purple-900/50 to-pink-800/30 rounded-2xl p-6 border border-purple-500/30 hover:border-purple-400/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20' },
           React.createElement(
             'div',
             { className: 'flex flex-col items-center text-center' },
             React.createElement(
               'div',
               { className: 'text-4xl mb-3' },
-              '📊'
+              '📝'
             ),
             React.createElement(
               'div',
@@ -173,7 +251,7 @@ const Home = ({ showToast }: { showToast: (message: string, type: string) => voi
             React.createElement(
               'div',
               { className: 'text-gray-300 font-semibold' },
-              'בלוגים שנוצרו'
+              'בלוגים נוצרו'
             )
           )
         )
@@ -186,7 +264,7 @@ const Home = ({ showToast }: { showToast: (message: string, type: string) => voi
       { className: 'mb-16 text-center' },
       React.createElement(
         'h3',
-        { className: 'text-2xl md:text-3xl font-bold mb-4 bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent' },
+        { className: 'text-2xl md:text-3xl font-bold mb-4 bg-linear-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent' },
         'דרג את האפליקציה שלנו'
       ),
       React.createElement(
@@ -217,7 +295,7 @@ const Home = ({ showToast }: { showToast: (message: string, type: string) => voi
         React.createElement(
           'button',
           {
-            className: 'px-6 py-2 bg-gradient-to-r from-purple-600 to-cyan-500 rounded-lg hover:from-purple-700 hover:to-cyan-600 transition-all font-semibold',
+            className: 'px-6 py-2 bg-linear-to-r from-purple-600 to-cyan-500 rounded-lg hover:from-purple-700 hover:to-cyan-600 transition-all font-semibold',
             onClick: () => submitRating(userRating)
           },
           'שלח דירוג'
@@ -241,12 +319,12 @@ const Home = ({ showToast }: { showToast: (message: string, type: string) => voi
           { className: 'flex items-center gap-3 mb-3' },
           React.createElement(
             'div',
-            { className: 'w-10 h-10 bg-gradient-to-br from-purple-600 to-cyan-500 rounded-lg flex items-center justify-center' },
+            { className: 'w-10 h-10 bg-linear-to-br from-purple-600 to-cyan-500 rounded-lg flex items-center justify-center' },
             '📝'
           ),
           React.createElement(
             'h3',
-            { className: 'text-xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text' },
+            { className: 'text-xl font-bold text-transparent bg-linear-to-r from-purple-400 to-cyan-400 bg-clip-text' },
             'יצירת בלוגים מיוטיוב',
           ),
         ),
@@ -264,12 +342,12 @@ const Home = ({ showToast }: { showToast: (message: string, type: string) => voi
           { className: 'flex items-center gap-3 mb-3' },
           React.createElement(
             'div',
-            { className: 'w-10 h-10 bg-gradient-to-br from-purple-600 to-cyan-500 rounded-lg flex items-center justify-center' },
+            { className: 'w-10 h-10 bg-linear-to-br from-purple-600 to-cyan-500 rounded-lg flex items-center justify-center' },
             '🎨'
           ),
           React.createElement(
             'h3',
-            { className: 'text-xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text' },
+            { className: 'text-xl font-bold text-transparent bg-linear-to-r from-purple-400 to-cyan-400 bg-clip-text' },
             'מחולל ועורך תמונות',
           ),
         ),
@@ -287,12 +365,12 @@ const Home = ({ showToast }: { showToast: (message: string, type: string) => voi
           { className: 'flex items-center gap-3 mb-3' },
           React.createElement(
             'div',
-            { className: 'w-10 h-10 bg-gradient-to-br from-purple-600 to-cyan-500 rounded-lg flex items-center justify-center' },
+            { className: 'w-10 h-10 bg-linear-to-br from-purple-600 to-cyan-500 rounded-lg flex items-center justify-center' },
             '🎬'
           ),
           React.createElement(
             'h3',
-            { className: 'text-xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text' },
+            { className: 'text-xl font-bold text-transparent bg-linear-to-r from-purple-400 to-cyan-400 bg-clip-text' },
             'וידאו: יצירה וניתוח',
           ),
         ),
@@ -310,12 +388,12 @@ const Home = ({ showToast }: { showToast: (message: string, type: string) => voi
           { className: 'flex items-center gap-3 mb-3' },
           React.createElement(
             'div',
-            { className: 'w-10 h-10 bg-gradient-to-br from-purple-600 to-cyan-500 rounded-lg flex items-center justify-center' },
+            { className: 'w-10 h-10 bg-linear-to-br from-purple-600 to-cyan-500 rounded-lg flex items-center justify-center' },
             '💬'
           ),
           React.createElement(
             'h3',
-            { className: 'text-xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text' },
+            { className: 'text-xl font-bold text-transparent bg-linear-to-r from-purple-400 to-cyan-400 bg-clip-text' },
             'צ\'אט ועוזר קולי',
           ),
         ),
@@ -333,12 +411,12 @@ const Home = ({ showToast }: { showToast: (message: string, type: string) => voi
           { className: 'flex items-center gap-3 mb-3' },
           React.createElement(
             'div',
-            { className: 'w-10 h-10 bg-gradient-to-br from-purple-600 to-cyan-500 rounded-lg flex items-center justify-center' },
+            { className: 'w-10 h-10 bg-linear-to-br from-purple-600 to-cyan-500 rounded-lg flex items-center justify-center' },
             '🔊'
           ),
           React.createElement(
             'h3',
-            { className: 'text-xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text' },
+            { className: 'text-xl font-bold text-transparent bg-linear-to-r from-purple-400 to-cyan-400 bg-clip-text' },
             'טקסט לדיבור',
           ),
         ),
@@ -356,12 +434,12 @@ const Home = ({ showToast }: { showToast: (message: string, type: string) => voi
           { className: 'flex items-center gap-3 mb-3' },
           React.createElement(
             'div',
-            { className: 'w-10 h-10 bg-gradient-to-br from-purple-600 to-cyan-500 rounded-lg flex items-center justify-center' },
+            { className: 'w-10 h-10 bg-linear-to-br from-purple-600 to-cyan-500 rounded-lg flex items-center justify-center' },
             '⚙️'
           ),
           React.createElement(
             'h3',
-            { className: 'text-xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text' },
+            { className: 'text-xl font-bold text-transparent bg-linear-to-r from-purple-400 to-cyan-400 bg-clip-text' },
             'שילוב API',
           ),
         ),

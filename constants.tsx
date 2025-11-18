@@ -27,3 +27,4 @@ export const YOUTUBE_CHANNEL_ICON = '📺';
 export const FAQ_ICON = '❓';
 export const CONTACT_ICON = '📧';
 export const LEGAL_ICON = '⚖️';
+export const DASHBOARD_ICON = '🏠';

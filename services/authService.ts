@@ -1,17 +1,40 @@
 // services/authService.ts
 
-// IMPORTANT: Replace 'NEXT_PUBLIC_GOOGLE_CLIENT_ID' with your actual Google Cloud Project Client ID
-const CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+// IMPORTANT: Replace 'VITE_GOOGLE_CLIENT_ID' with your actual Google Cloud Project Client ID
+const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 const SCOPES = 'profile email';
 
-let googleApiClient = null; // Changed to null, relying on runtime checks
+// TypeScript interfaces for Google OAuth
+interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  picture: string;
+}
+
+interface UserData {
+  idToken?: string;
+  accessToken?: string;
+  profile: UserProfile;
+}
+
+interface TokenResponse {
+  access_token?: string;
+  error?: string;
+}
+
+interface CredentialResponse {
+  credential: string;
+}
+
+let googleApiClient: any = null; // Google OAuth2 token client
 
 export const initGoogleSignIn = (
-  onSignIn,
-  onSignOut
-) => {
+  onSignIn: (userData: UserData) => void,
+  onSignOut: () => void
+): void => {
   if (!CLIENT_ID) {
-    console.error("NEXT_PUBLIC_GOOGLE_CLIENT_ID is not defined in environment variables.");
+    console.error("VITE_GOOGLE_CLIENT_ID is not defined in environment variables.");
     return;
   }
 
@@ -30,7 +53,7 @@ export const initGoogleSignIn = (
   googleApiClient = window.google.accounts.oauth2.initTokenClient({
     client_id: CLIENT_ID,
     scope: SCOPES,
-    callback: (tokenResponse) => {
+    callback: (tokenResponse: TokenResponse) => {
       if (tokenResponse.access_token) {
         fetchUserInfo(tokenResponse.access_token).then(onSignIn).catch(console.error);
       } else {
@@ -48,13 +71,13 @@ export const initGoogleSignIn = (
 
   window.google.accounts.id.initialize({
     client_id: CLIENT_ID,
-    callback: (response) => {
+    callback: (response: CredentialResponse) => {
       if (response.credential) {
         // Decode JWT to get user info, or send to backend for verification
         const userData = JSON.parse(atob(response.credential.split('.')[1]));
         onSignIn({
           idToken: response.credential,
-          accessToken: null, // For one-tap/popup, access token might not be directly available without further steps
+          accessToken: undefined, // For one-tap/popup, access token might not be directly available without further steps
           profile: {
             id: userData.sub,
             name: userData.name,
@@ -103,7 +126,7 @@ export const signOut = () => {
   // }
 };
 
-const fetchUserInfo = async (accessToken) => {
+const fetchUserInfo = async (accessToken: string) => {
   const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
     headers: {
       Authorization: `Bearer ${accessToken}`,

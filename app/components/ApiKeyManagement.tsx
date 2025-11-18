@@ -76,10 +76,10 @@ const ApiKeyManagement = ({ showToast, setCurrentView }) => {
 
     React.createElement(
       'div',
-      { className: 'w-full max-w-lg bg-gradient-to-br from-purple-900/40 to-gray-800/60 p-6 rounded-xl shadow-2xl mt-8 text-left border border-purple-500/30' },
+      { className: 'w-full max-w-lg bg-linear-to-br from-purple-900/40 to-gray-800/60 p-6 rounded-xl shadow-2xl mt-8 text-left border border-purple-500/30' },
       React.createElement(
         'h3',
-        { className: 'text-2xl font-black text-transparent bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text mb-6 flex items-center gap-2' },
+        { className: 'text-2xl font-black text-transparent bg-linear-to-r from-purple-400 to-cyan-400 bg-clip-text mb-6 flex items-center gap-2' },
         '🔑 מפתח API של Google Gemini',
       ),
       React.createElement(
@@ -105,7 +105,7 @@ const ApiKeyManagement = ({ showToast, setCurrentView }) => {
           'button',
           {
             onClick: handleSaveGeminiApiKey,
-            className: 'mt-3 w-full bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 shadow-lg hover:shadow-purple-500/50',
+            className: 'mt-3 w-full bg-linear-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 shadow-lg hover:shadow-purple-500/50',
             'data-testid': 'save-gemini-key-button',
           },
           '💾 שמור מפתח Gemini API',

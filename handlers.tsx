@@ -1,5 +1,6 @@
 import { generateBlogPost } from './services/geminiService';
 import { getYouTubeVideoId } from './utils/youtube';
+import { blogStorage } from './services/blogStorageService';
 
 export const createHandlers = (
   setYoutubeUrl: (value: string) => void,
@@ -43,6 +44,24 @@ export const createHandlers = (
     try {
       const response = await generateBlogPost(youtubeUrl, targetAudience, desiredTone);
       setBlogGenerationResponse(response);
+
+      // Auto-save the blog to localStorage for dashboard
+      try {
+        blogStorage.saveBlog({
+          userId: 'default', // For now, using default since we don't have user-specific storage yet
+          videoTitle: response.videoTitle,
+          videoUrl: youtubeUrl,
+          videoEmbedUrl: response.videoEmbedUrl,
+          blogContent: response.blogContent,
+          targetAudience,
+          desiredTone,
+          isPublished: false,
+        });
+      } catch (storageError) {
+        console.warn('Failed to save blog to localStorage:', storageError);
+        // Don't fail the generation if storage fails
+      }
+
       showToast('Blog post generated successfully!', 'success');
     } catch (err) {
       console.error(err);

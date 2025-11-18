@@ -7,6 +7,7 @@ import Chatbot from './components/Chatbot';
 import VoiceAssistant from './components/VoiceAssistant';
 import TextToSpeech from './components/TextToSpeech';
 import Home from './components/Home';
+import Dashboard from './components/Dashboard';
 import YouTubeChannelLoader from './components/YouTubeChannelLoader';
 import ApiKeyManagement from './components/ApiKeyManagement';
 import FAQ from './components/FAQ';
@@ -37,6 +38,7 @@ interface ContentRendererProps {
   handleDownloadPdf: () => void;
   handleCopyBlog: () => void;
   handleShareBlog: () => void;
+  currentUser: any;
 }
 
 const ContentRenderer: React.FC<ContentRendererProps> = ({
@@ -60,6 +62,7 @@ const ContentRenderer: React.FC<ContentRendererProps> = ({
   handleDownloadPdf,
   handleCopyBlog,
   handleShareBlog,
+  currentUser,
 }) => {
   if (!isLoggedIn && currentView !== 'home' && currentView !== 'faq' && currentView !== 'contact' && currentView !== 'terms' && currentView !== 'privacy' && currentView !== 'youtube-channel' && currentView !== 'api-key') {
     return React.createElement(
@@ -72,6 +75,8 @@ const ContentRenderer: React.FC<ContentRendererProps> = ({
   switch (currentView) {
     case 'home':
       return React.createElement(Home, { showToast });
+    case 'dashboard':
+      return React.createElement(Dashboard, { showToast, currentUser });
     case 'blog':
       return React.createElement(
         'section',

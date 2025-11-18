@@ -9,21 +9,40 @@ import ContentRenderer from './ContentRenderer';
 
 type ThemeMode = 'light' | 'dark' | 'system';
 
+type BlogGenerationResponse = {
+  videoTitle: string;
+  videoEmbedUrl: string;
+  blogContent: string;
+} | null;
+
+type Toast = {
+  id: number;
+  message: string;
+  type: string;
+} | null;
+
+type UserProfile = {
+  id: string;
+  name: string;
+  email: string;
+  picture?: string;
+} | null;
+
 function App() {
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [targetAudience, setTargetAudience] = useState(''); // New state for target audience
   const [desiredTone, setDesiredTone] = useState(''); // New state for desired tone
   const [blogGenerationResponse, setBlogGenerationResponse] =
-    useState(null);
+    useState<BlogGenerationResponse>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [currentUser, setCurrentUser] = useState(null); // New state for current user
+  const [error, setError] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<UserProfile>(null); // New state for current user
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Default to not logged in
   const [themeMode, setThemeMode] = useState<ThemeMode>('system'); // New: System theme by default
   const [isDarkMode, setIsDarkMode] = useState(true); // Computed based on themeMode
   const [showVideoEmbed, setShowVideoEmbed] = useState(false);
   const [currentView, setCurrentView] = useState('home'); // Default view to 'home'
-  const [toast, setToast] = useState(null); // New state for toast notifications
+  const [toast, setToast] = useState<Toast>(null); // New state for toast notifications
 
   const { showToast, handleCloseToast } = createShowToast(setToast);
 
@@ -33,6 +52,7 @@ function App() {
     handleDownloadPdf,
     handleCopyBlog,
     handleShareBlog,
+    handleViewFullBlog,
   } = createHandlers(
     setYoutubeUrl,
     setTargetAudience,
@@ -124,7 +144,7 @@ function App() {
     }
   }, [isDarkMode, themeMode]);
 
-  const handleLoginToggle = (loggedIn) => {
+  const handleLoginToggle = (loggedIn: boolean) => {
     if (loggedIn) {
       signIn(); // Initiates Google Sign-In flow
     } else {
@@ -147,7 +167,7 @@ function App() {
   return React.createElement(
     'div',
     {
-      className: `min-h-screen flex flex-col bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white`,
+      className: `min-h-screen flex flex-col bg-linear-to-br from-gray-950 via-gray-900 to-gray-950 text-white`,
     },
     React.createElement(Header, {
       isLoggedIn: isLoggedIn,
@@ -182,6 +202,7 @@ function App() {
         handleDownloadPdf,
         handleCopyBlog,
         handleShareBlog,
+        handleViewFullBlog,
       }))
     ),
     React.createElement(

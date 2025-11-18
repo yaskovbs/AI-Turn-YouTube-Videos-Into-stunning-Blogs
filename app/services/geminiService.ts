@@ -1,5 +1,5 @@
 import { GoogleGenAI, Modality, Type } from '@google/genai';
-import { getYouTubeVideoId } from '../utils/youtube';
+import { getYouTubeVideoId, fetchYouTubeVideoDetails } from '../utils/youtube';
 import { decode, decodeAudioData, createPcmBlob } from '../utils/file';
 
 // TypeScript type definitions
@@ -113,8 +113,8 @@ const getApiKey = () => {
   return apiKey;
 };
 
-// Helper to simulate fetching video title and thumbnail
-async function fetchYouTubeVideoDetails(
+// Helper to transform YouTube API data for our interface
+async function transformYouTubeVideoData(
   youtubeUrl: string,
 ): Promise<YouTubeVideoInfo> {
   const videoId = getYouTubeVideoId(youtubeUrl);
@@ -122,23 +122,36 @@ async function fetchYouTubeVideoDetails(
     throw new Error('Invalid YouTube URL');
   }
 
-  // Simulate API call to YouTube Data API (not actually implemented, just mock data)
-  const mockTitles = [
-    'Exploring the Depths of Ocean Life',
-    'Beginner\'s Guide to React Hooks',
-    'Delicious Vegan Recipes for Every Day',
-    'The History of Ancient Civilizations',
-    'Mastering Digital Photography Basics',
-  ];
-  const mockTitle =
-    mockTitles[Math.floor(Math.random() * mockTitles.length)] ||
-    `Blog Post for Video ID: ${videoId}`;
+  try {
+    // Try to fetch real YouTube data first
+    const videoData = await fetchYouTubeVideoDetails(videoId);
 
-  return {
-    title: mockTitle,
-    thumbnail: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
-    embedUrl: `https://www.youtube.com/embed/${videoId}`,
-  };
+    return {
+      title: videoData.title,
+      thumbnail: videoData.thumbnail,
+      embedUrl: `https://www.youtube.com/embed/${videoId}`,
+    };
+  } catch (error) {
+    console.warn('Failed to fetch real YouTube data, falling back to mock data:', error);
+
+    // Fallback to mock data if API fails
+    const mockTitles = [
+      'Exploring the Depths of Ocean Life',
+      'Beginner\'s Guide to React Hooks',
+      'Delicious Vegan Recipes for Every Day',
+      'The History of Ancient Civilizations',
+      'Mastering Digital Photography Basics',
+    ];
+    const mockTitle =
+      mockTitles[Math.floor(Math.random() * mockTitles.length)] ||
+      `Blog Post for Video ID: ${videoId}`;
+
+    return {
+      title: mockTitle,
+      thumbnail: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+      embedUrl: `https://www.youtube.com/embed/${videoId}`,
+    };
+  }
 }
 
 export const generateBlogPost = async (
@@ -150,7 +163,7 @@ export const generateBlogPost = async (
   const model = 'gemini-2.5-flash'; // Using the appropriate model for text generation
 
   try {
-    const videoDetails = await fetchYouTubeVideoDetails(youtubeUrl);
+    const videoDetails = await transformYouTubeVideoData(youtubeUrl);
 
     // Enhanced prompt to capture tone and nuances more effectively
     let prompt = `Based on a YouTube video with the title "${videoDetails.title}", generate a high-quality, engaging blog post.

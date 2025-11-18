@@ -119,12 +119,22 @@ export const createHandlers = (
     }
   };
 
+  const handleViewFullBlog = () => {
+    const fullContent = document.getElementById('full-blog-content');
+    if (fullContent) {
+      const isVisible = fullContent.style.display !== 'none';
+      fullContent.style.display = isVisible ? 'none' : 'block';
+      showToast(isVisible ? 'Blog preview shown' : 'Full blog displayed', 'info');
+    }
+  };
+
   return {
     handleGenerateBlog,
     handleDownloadBlog,
     handleDownloadPdf,
     handleCopyBlog,
     handleShareBlog,
+    handleViewFullBlog,
   };
 };
 
