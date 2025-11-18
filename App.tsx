@@ -134,10 +134,14 @@ function App() {
     localStorage.setItem('themeMode', themeMode);
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
+      document.body.style.backgroundColor = '#0f0f0f';
+      document.body.style.color = 'white';
       document.body.classList.add('bg-gray-900', 'text-white');
       document.body.classList.remove('bg-white', 'text-gray-900');
     } else {
       document.documentElement.classList.remove('dark');
+      document.body.style.backgroundColor = 'white';
+      document.body.style.color = '#111827';
       document.body.classList.add('bg-white', 'text-gray-900');
       document.body.classList.remove('bg-gray-900', 'text-white');
     }
@@ -166,7 +170,7 @@ function App() {
   return React.createElement(
     'div',
     {
-      className: `min-h-screen flex flex-col bg-linear-to-br from-gray-950 via-gray-900 to-gray-950 text-white`,
+      className: `min-h-screen flex flex-col ${isDarkMode ? 'bg-linear-to-br from-gray-950 via-gray-900 to-gray-950 text-white' : 'bg-gradient-to-br from-gray-50 to-white text-gray-900'}`,
     },
     React.createElement(Header, {
       isLoggedIn: isLoggedIn,
@@ -206,7 +210,7 @@ function App() {
     ),
     React.createElement(
       'footer',
-      { className: 'border-t border-gray-800 bg-gray-900/50 backdrop-blur-sm mt-12' },
+      { className: `border-t ${isDarkMode ? 'border-gray-800 bg-gray-900/50' : 'border-gray-300 bg-gray-100/50'} backdrop-blur-sm mt-12` },
       React.createElement(
         'div',
         { className: 'max-w-7xl mx-auto px-4 py-12' },
@@ -336,7 +340,7 @@ function App() {
           ),
         ),
         // Divider
-        React.createElement('div', { className: 'border-t border-gray-800 mb-6' }),
+        React.createElement('div', { className: `border-t ${isDarkMode ? 'border-gray-800' : 'border-gray-300'} mb-6` }),
         // Bottom
         React.createElement(
           'div',
