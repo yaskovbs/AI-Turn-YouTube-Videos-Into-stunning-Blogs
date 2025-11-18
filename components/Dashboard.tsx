@@ -242,9 +242,32 @@ const Dashboard: React.FC<DashboardProps> = ({ showToast, currentUser }) => {
                     </div>
 
                     {viewMode === 'list' && (
+                      <>
                       <div className="text-gray-300 text-sm mb-4 line-clamp-3">
                         {blog.blogContent.substring(0, 200)}...
                       </div>
+                      {blog.isPublished && domainSettings && (
+                        <div className="text-sm text-purple-300 mb-4">
+                          <span className="font-semibold">כתובת:</span>
+                          <a
+                            href={domainSettings.customDomain
+                              ? `https://${domainSettings.customDomain}/${blog.id}`
+                              : domainSettings.subdomain
+                                ? `https://${domainSettings.subdomain}.yourblogsite.com/${blog.id}`
+                                : '#'}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-purple-300 hover:text-purple-100 underline ml-2"
+                          >
+                            {domainSettings.customDomain
+                              ? `${domainSettings.customDomain}/${blog.id}`
+                              : domainSettings.subdomain
+                                ? `${domainSettings.subdomain}.yourblogsite.com/${blog.id}`
+                                : 'הגדר דומיין להצגת כתובת'}
+                          </a>
+                        </div>
+                      )}
+                      </>
                     )}
 
                     {/* Actions */}
