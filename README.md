@@ -2,7 +2,7 @@
 
 Transform YouTube videos into professional, engaging blog posts instantly using advanced AI technology.
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen?style=for-the-badge&logo=vercel)](https://vercel.com/yakov-team/v0-turnyoutubevideosintostunningblogs1-w4)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen?style=for-the-badge&logo=vercel)](https://ai-turn-youtube-videos-into-stunning-blogs.pages.dev/)
 [![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge&logo=v0)](https://v0.app/chat/sgHCYk5mlmt)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-61DAFB?style=flat&logo=react&logoColor=white)](https://reactjs.org/)

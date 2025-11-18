@@ -7,6 +7,7 @@ import Chatbot from './components/Chatbot';
 import VoiceAssistant from './components/VoiceAssistant';
 import TextToSpeech from './components/TextToSpeech';
 import Home from './components/Home';
+import Login from './components/Login';
 import YouTubeChannelLoader from './components/YouTubeChannelLoader';
 import ApiKeyManagement from './components/ApiKeyManagement';
 import AdSenseManager from './components/AdSenseManager';
@@ -75,6 +76,8 @@ const ContentRenderer: React.FC<ContentRendererProps> = ({
   switch (currentView) {
     case 'home':
       return React.createElement(Home, { showToast });
+    case 'login':
+      return React.createElement(Login, { showToast });
     case 'blog':
       return React.createElement(
         'section',

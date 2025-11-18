@@ -82,6 +82,9 @@ function App() {
       const user = JSON.parse(storedUser);
       setCurrentUser(user);
       setIsLoggedIn(true);
+      setCurrentView('home'); // Default to home if logged in
+    } else {
+      setCurrentView('login'); // Default to login if not logged in
     }
 
     initGoogleSignIn(
@@ -90,6 +93,7 @@ function App() {
         console.log("Signed in:", authResult);
         setCurrentUser(authResult.profile);
         setIsLoggedIn(true);
+        setCurrentView('home');
         localStorage.setItem('userProfile', JSON.stringify(authResult.profile));
         showToast(`Welcome, ${authResult.profile.name}!`, 'success');
       },
@@ -169,7 +173,7 @@ function App() {
     {
       className: `min-h-screen flex flex-col bg-linear-to-br from-gray-950 via-gray-900 to-gray-950 text-white`,
     },
-    React.createElement(Header, {
+    currentView !== 'login' && React.createElement(Header, {
       isLoggedIn: isLoggedIn,
       onLoginToggle: handleLoginToggle,
       themeMode: themeMode,
