@@ -376,6 +376,42 @@ function App() {
               React.createElement(
                 'button',
                 {
+                  onClick: () => setCurrentView('home'),
+                  className: 'px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm font-medium text-gray-300 hover:text-white transition-all duration-200 flex items-center gap-2',
+                },
+                React.createElement('span', null, '🏠'),
+                'בית'
+              ),
+              React.createElement(
+                'button',
+                {
+                  onClick: () => setCurrentView('dashboard'),
+                  className: 'px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm font-medium text-gray-300 hover:text-white transition-all duration-200 flex items-center gap-2',
+                },
+                React.createElement('span', null, '📊'),
+                'דשבורד'
+              ),
+              React.createElement(
+                'button',
+                {
+                  onClick: () => setCurrentView('blog'),
+                  className: 'px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm font-medium text-gray-300 hover:text-white transition-all duration-200 flex items-center gap-2',
+                },
+                React.createElement('span', null, '📝'),
+                'יוטיוב לבלוג'
+              ),
+              React.createElement(
+                'button',
+                {
+                  onClick: () => setCurrentView('image-gen'),
+                  className: 'px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm font-medium text-gray-300 hover:text-white transition-all duration-200 flex items-center gap-2',
+                },
+                React.createElement('span', null, '🎨'),
+                'מחולל תמונות'
+              ),
+              React.createElement(
+                'button',
+                {
                   onClick: () => setCurrentView('image-edit'),
                   className: 'px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm font-medium text-gray-300 hover:text-white transition-all duration-200 flex items-center gap-2',
                 },
